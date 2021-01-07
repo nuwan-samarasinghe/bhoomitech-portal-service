@@ -7,13 +7,13 @@ management:
         allow-credentials: true
 spring:
   datasource:
-    url: jdbc:mysql://synergy-dev-env.cdn32ggqzpo2.us-east-2.rds.amazonaws.com:3306/synergy_dev?createDatabaseIfNotExist=true
-    username: synergy_dev
-    password: Tester123$
+    url: jdbc:mysql://localhost:3306/boomitech?createDatabaseIfNotExist=true
+    username: root
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
     show-sql: true
   application:
     name: supplierservice
