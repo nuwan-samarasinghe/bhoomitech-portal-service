@@ -8,11 +8,10 @@
         <version>2.4.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.portal</groupId>
+    <groupId>com.bhoomitech.portalservice</groupId>
     <artifactId>portal-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>portal-service</name>
-    <description>synergy bio supplier management</description>
 
     <properties>
         <java.version>1.8</java.version>
