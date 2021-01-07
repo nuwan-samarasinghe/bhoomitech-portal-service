@@ -13,7 +13,7 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
     @Column(name = "project_name")
     private String projectName;
     @Column(name = "project_start_timestamp")

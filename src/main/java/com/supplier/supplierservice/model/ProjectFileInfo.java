@@ -15,7 +15,7 @@ public class ProjectFileInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Long id;
     @Column(name ="project_file_type")
     private ProjectFileType projectFileType;
     @Column(name ="base_point_id")
