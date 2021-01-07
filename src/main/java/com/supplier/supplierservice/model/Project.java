@@ -27,5 +27,5 @@ public class Project {
     @Column(name = "price")
     private Long price;
     @Column(name = "created_timestamp")
-    private Timestamp createdT_timestamp;
+    private Timestamp createdTimestamp;
 }
