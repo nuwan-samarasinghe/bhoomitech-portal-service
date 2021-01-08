@@ -5,12 +5,7 @@ import com.bhoomitech.portalservice.apidocs.project.ProjectFileInfoResponseDocum
 import com.bhoomitech.portalservice.service.ProjectFileInfoService;
 import com.bhoomitech.portalservice.util.ProjectConverter;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +22,7 @@ public class ProjectController {
 
     @PreAuthorize("hasRole('ROLE_admin')")
     @GetMapping(value = "/all")
-    private @ResponseBody
+    public @ResponseBody
     List<ProjectFileInfoResponseDocument> getAllProjectFileInfoList() {
         return projectFileInfoService.getProjectInfos()
                 .stream()
@@ -37,7 +32,7 @@ public class ProjectController {
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
     @PostMapping(value = "/user")
-    private @ResponseBody
+    public @ResponseBody
     List<ProjectFileInfoResponseDocument> getAllProjectFileInfoListForUserHref(@RequestBody String userHref) {
         return projectFileInfoService
                 .getProjectInfosByUserHref(userHref)
@@ -48,7 +43,7 @@ public class ProjectController {
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
     @PostMapping(value = "/create")
-    private @ResponseBody
+    public @ResponseBody
     ProjectFileInfoResponseDocument getAllProjectFileInfoList(@RequestBody ProjectFileInfoRequestDocument projectFileInfoRequestDocument) {
         return ProjectConverter.fileInfoResponseDocumentFunction
                 .apply(projectFileInfoService
