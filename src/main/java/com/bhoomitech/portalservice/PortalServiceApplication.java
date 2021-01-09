@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.bhoomitech.portalservice")
 @EnableResourceServer
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class PortalServiceApplication {
