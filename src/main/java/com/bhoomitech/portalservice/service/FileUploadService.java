@@ -27,13 +27,16 @@ public class FileUploadService {
     public static final String KNOWN = "/known/";
     private final AmazonS3 amazonS3Client;
 
-    @Value("${spring.servlet.multipart.max-file-upload-limit}")
+    @Value("${app.custom-configs.max-file-upload-limit}")
     private Integer maxFileUploadLimit;
 
-    @Value("${cloud.aws.bucket-name}")
+    @Value("${app.custom-configs.min-file-upload-limit}")
+    private Integer minFileUploadLimit;
+
+    @Value("${app.custom-configs.bucket-name}")
     private String bucketName;
 
-    @Value("${spring.servlet.multipart.file-base-location}")
+    @Value("${app.custom-configs.file-base-location}")
     private String fileBaseLocation;
 
     public FileUploadService(AmazonS3 amazonS3Client) {
@@ -70,14 +73,23 @@ public class FileUploadService {
             fileUploadStatusDocument.setValidationMessage("empty un-known files provided");
             return false;
         }
-        if (knownFiles.length <= maxFileUploadLimit) {
+        if (knownFiles.length > maxFileUploadLimit) {
             fileUploadStatusDocument.setValidationMessage("more than 5 files provided for upload");
             return false;
         }
-        if (unKnownFiles.length <= maxFileUploadLimit) {
+        if (knownFiles.length < minFileUploadLimit) {
+            fileUploadStatusDocument.setValidationMessage("need at least single file provided for upload");
+            return false;
+        }
+        if (unKnownFiles.length > maxFileUploadLimit) {
             fileUploadStatusDocument.setValidationMessage("more than 5 files provided for upload");
             return false;
         }
+        if (unKnownFiles.length < minFileUploadLimit) {
+            fileUploadStatusDocument.setValidationMessage("need at least single file provided for upload");
+            return false;
+        }
+        fileUploadStatusDocument.setValidationMessage("validation success full");
         return true;
     }
 

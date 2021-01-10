@@ -22,8 +22,6 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
       enabled: true
-      file-base-location: "https://bhoomi-tech-s3-bucket.s3.amazonaws.com/"
-      max-file-upload-limit: 5
 logging.level.org.springframework.web: DEBUG
 logging.level.org.hibernate: ERROR
 server:
@@ -43,4 +41,9 @@ cloud:
       secret-key: "Tiy9pc2pdVVq7l2h6FHnunTj51cHvl0jUJQdq/Ib"
     region:
       static: "us-east-1"
+app:
+  custom-configs:
+    file-base-location: "https://bhoomi-tech-s3-bucket.s3.amazonaws.com/"
+    max-file-upload-limit: 5
+    min-file-upload-limit: 1
     bucket-name: "bhoomi-tech-s3-bucket"
