@@ -1,8 +1,7 @@
 package com.bhoomitech.portalservice.controller;
 
-import com.bhoomitech.portalservice.apidocs.project.ProjectFileInfoRequestDocument;
-import com.bhoomitech.portalservice.apidocs.project.ProjectFileInfoResponseDocument;
-import com.bhoomitech.portalservice.service.ProjectFileInfoService;
+import com.bhoomitech.portalservice.apidocs.project.ProjectDocument;
+import com.bhoomitech.portalservice.service.ProjectService;
 import com.bhoomitech.portalservice.util.ProjectConverter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -11,43 +10,52 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/project")
 public class ProjectController {
 
-    private final ProjectFileInfoService projectFileInfoService;
+    public static final String CREATE = "CREATE";
+    public static final String UPDATE = "UPDATE";
+    private final ProjectService projectService;
 
-    public ProjectController(ProjectFileInfoService projectFileInfoService) {
-        this.projectFileInfoService = projectFileInfoService;
+    public ProjectController(ProjectService projectService) {
+        this.projectService = projectService;
     }
 
     @PreAuthorize("hasRole('ROLE_admin')")
-    @GetMapping(value = "/all")
+    @GetMapping(value = "/project/all")
     public @ResponseBody
-    List<ProjectFileInfoResponseDocument> getAllProjectFileInfoList() {
-        return projectFileInfoService.getProjectInfos()
+    List<ProjectDocument> getAllProjectFileInfoList() {
+        return projectService.getProject()
                 .stream()
-                .map(ProjectConverter.fileInfoResponseDocumentFunction)
+                .map(ProjectConverter.projectProjectDocumentFunction)
                 .collect(Collectors.toList());
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
-    @PostMapping(value = "/user")
+    @GetMapping(value = "/project/user")
     public @ResponseBody
-    List<ProjectFileInfoResponseDocument> getAllProjectFileInfoListForUserHref(@RequestBody String userHref) {
-        return projectFileInfoService
-                .getProjectInfosByUserHref(userHref)
+    List<ProjectDocument> getAllProjectFileInfoListForUserHref(@RequestParam("userHref") String userHref) {
+        return projectService
+                .getProjectByUserHref(userHref)
                 .stream()
-                .map(ProjectConverter.fileInfoResponseDocumentFunction)
+                .map(ProjectConverter.projectProjectDocumentFunction)
                 .collect(Collectors.toList());
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
-    @PostMapping(value = "/create")
+    @PostMapping(value = "/project")
     public @ResponseBody
-    ProjectFileInfoResponseDocument getAllProjectFileInfoList(@RequestBody ProjectFileInfoRequestDocument projectFileInfoRequestDocument) {
-        return ProjectConverter.fileInfoResponseDocumentFunction
-                .apply(projectFileInfoService
-                        .saveOrUpdateProjectFileInfo(ProjectConverter.documentProjectFileInfoFunction
-                                .apply(projectFileInfoRequestDocument)));
+    ProjectDocument createProjectFileInfoList(@RequestBody ProjectDocument projectFileInfoDocument) {
+        return projectService
+                .saveOrUpdateProject(ProjectConverter.projectDocumentProjectFunction
+                        .apply(projectFileInfoDocument), CREATE);
+    }
+
+    @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
+    @PutMapping(value = "/project")
+    public @ResponseBody
+    ProjectDocument updateProjectFileInfoList(@RequestBody ProjectDocument projectFileInfoDocument) {
+        return projectService
+                .saveOrUpdateProject(ProjectConverter.projectDocumentProjectFunction
+                        .apply(projectFileInfoDocument), UPDATE);
     }
 }

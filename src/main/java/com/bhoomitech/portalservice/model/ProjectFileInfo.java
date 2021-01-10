@@ -21,7 +21,7 @@ public class ProjectFileInfo {
     @Column(name ="file_location")
     private String fileLocation;
     @Column(name ="antenna_height")
-    private Long antennaHeight;
+    private String antennaHeight;
     @Column(name ="antenna_brand")
     private String antennaBrand;
     @Column(name ="antenna_model")
@@ -32,8 +32,4 @@ public class ProjectFileInfo {
     private String gpsCoordinatesLon;
     @Column(name ="gps_coordinates_z")
     private String gpsCoordinatesZ;
-
-    @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
 }

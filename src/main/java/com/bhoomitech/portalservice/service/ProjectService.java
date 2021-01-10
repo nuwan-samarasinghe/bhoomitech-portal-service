@@ -1,9 +1,12 @@
 package com.bhoomitech.portalservice.service;
 
+import com.bhoomitech.portalservice.apidocs.project.ProjectDocument;
 import com.bhoomitech.portalservice.model.Project;
 import com.bhoomitech.portalservice.repository.ProjectRepository;
+import com.bhoomitech.portalservice.util.ProjectConverter;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,15 +24,12 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
-    public Optional<Project> getProjectById(@NonNull Long projectId) {
-        return projectRepository.findById(projectId);
+    @Transactional(rollbackFor = Exception.class)
+    public ProjectDocument saveOrUpdateProject(@NonNull Project project, @NonNull String status) {
+        return ProjectConverter.projectProjectDocumentFunction.apply(projectRepository.save(project));
     }
 
-    public Optional<Project> getProjectByName(@NonNull String projectName) {
-        return projectRepository.findByProjectName(projectName);
-    }
-
-    public Project saveOrUpdateProject(@NonNull Project project) {
-        return projectRepository.save(project);
+    public List<Project> getProjectByUserHref(String userHref) {
+        return projectRepository.findAllByUserHref(userHref);
     }
 }

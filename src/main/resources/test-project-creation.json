@@ -1,0 +1,32 @@
+{
+  "agreementStatus": true,
+  "createdTimestamp": "2021-01-10 06:43:19.77",
+  "price": 20.00,
+  "projectEndTimestamp": "2021-03-10 06:43:19.77",
+  "projectFileInfoDocuments": [
+    {
+      "antennaBrand": "brand-123",
+      "antennaHeight": 100.234,
+      "antennaModel": "model1234",
+      "basePointId": "BASE11234",
+      "fileLocation": "https://bhoomi-tech-s3-bucket.s3.amazonaws.com/bhoomitech/known/A154.20o",
+      "fileName": "A154.20o",
+      "gpsCoordinatesLat": "10:10:10",
+      "gpsCoordinatesLon": "10:10:10",
+      "gpsCoordinatesZ": "10:10:10",
+      "projectFileType": "KNOWN_FILE"
+    },
+    {
+      "antennaBrand": "brand-123",
+      "antennaHeight": 100.234,
+      "antennaModel": "model1234",
+      "basePointId": "BASE11235",
+      "fileLocation": "https://bhoomi-tech-s3-bucket.s3.amazonaws.com/bhoomitech/unknown/A154.20n",
+      "fileName": "A154.20n",
+      "projectFileType": "UNKNOWN_FILE"
+    }
+  ],
+  "projectName": "sample-test-project",
+  "projectStartTimestamp": "2021-01-10 06:43:19.77",
+  "userHref": "/auth/user/1"
+}
