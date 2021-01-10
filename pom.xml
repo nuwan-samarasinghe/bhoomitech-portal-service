@@ -19,6 +19,7 @@
         <springfox-swagger-ui.version>2.9.2</springfox-swagger-ui.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <aws-java-sdk.version>1.11.163</aws-java-sdk.version>
+        <commons-io.version>2.6</commons-io.version>
     </properties>
 
     <dependencies>
@@ -51,6 +52,11 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
             <version>${aws-java-sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
         </dependency>
         <!--<dependency>
             <groupId>org.springframework.cloud</groupId>

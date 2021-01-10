@@ -8,6 +8,7 @@ import com.bhoomitech.portalservice.common.PortalServiceException;
 import com.bhoomitech.portalservice.model.ProjectFileType;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -89,8 +92,27 @@ public class FileUploadService {
             fileUploadStatusDocument.setValidationMessage("need at least single file provided for upload");
             return false;
         }
+        Boolean isValidFileAvailable = checkFileExt(knownFiles, fileUploadStatusDocument);
+        if (!isValidFileAvailable) return false;
+        isValidFileAvailable = checkFileExt(unKnownFiles, fileUploadStatusDocument);
+        if (!isValidFileAvailable) return false;
         fileUploadStatusDocument.setValidationMessage("validation success full");
         return true;
+    }
+
+    private Boolean checkFileExt(MultipartFile[] knownFiles, FileUploadStatusDocument fileUploadStatusDocument) {
+        boolean isValidFileAvailable = false;
+        for (MultipartFile file : knownFiles) {
+            String fileExt = FilenameUtils.getExtension(file.getOriginalFilename());
+            if (Pattern.compile("\\d+[a-z]").matcher(fileExt).matches()) {
+                isValidFileAvailable = true;
+            }
+            break;
+        }
+        if (!isValidFileAvailable) {
+            fileUploadStatusDocument.setValidationMessage("at least there should be a file ext like Ex.20n");
+        }
+        return isValidFileAvailable;
     }
 
     private void uploadFile(

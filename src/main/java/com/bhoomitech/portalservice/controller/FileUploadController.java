@@ -30,5 +30,4 @@ public class FileUploadController {
         return fileUploadService.fileUpload(knownFiles, unKnownFiles, companyName);
     }
 
-
 }
