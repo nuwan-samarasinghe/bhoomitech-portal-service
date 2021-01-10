@@ -17,6 +17,11 @@ spring:
     show-sql: true
   application:
     name: supplierservice
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+      enabled: true
 logging.level.org.springframework.web: DEBUG
 logging.level.org.hibernate: ERROR
 server:
@@ -24,11 +29,11 @@ server:
 security:
   oauth2:
     resource:
-      token-info-uri: http://ec2-18-217-32-145.us-east-2.compute.amazonaws.com:8080/oauth/check_token
+      token-info-uri: http://localhost:12002/oauth/check_token
     client:
       client-id: web
       client-secret: pin
-      access-token-uri: http://ec2-18-217-32-145.us-east-2.compute.amazonaws.com:8080/oauth/token
+      access-token-uri: http://localhost:12002/oauth/token
 cloud:
   aws:
     credentials:

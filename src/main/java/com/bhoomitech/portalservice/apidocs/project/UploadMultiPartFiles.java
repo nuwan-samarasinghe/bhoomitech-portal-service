@@ -7,5 +7,7 @@ import java.util.List;
 
 @Data
 public class UploadMultiPartFiles {
-    private List<MultipartFile> multipartFiles;
+    private String companyName;
+    private List<MultipartFile> knownFiles;
+    private List<MultipartFile> unKnownFiles;
 }
