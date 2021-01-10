@@ -7,4 +7,6 @@ public class FileStatusDocument {
     private Boolean statusUpload;
     private String fileLocation;
     private String message;
+    private Long fileSize;
+    private String fileName;
 }

@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -149,6 +148,8 @@ public class FileUploadService {
             FileStatusDocument fileStatusDocument = new FileStatusDocument();
             fileStatusDocument.setStatusUpload(Boolean.TRUE);
             fileStatusDocument.setMessage(projectFileType + " upload " + status + " file name" + multipartFile.getOriginalFilename());
+            fileStatusDocument.setFileSize(multipartFile.getSize());
+            fileStatusDocument.setFileName(multipartFile.getOriginalFilename());
             if (status.equals(SUCCESS)) {
                 fileStatusDocument.setFileLocation(fileBaseLocation + location);
             }
@@ -157,6 +158,8 @@ public class FileUploadService {
             FileStatusDocument fileStatusDocument = new FileStatusDocument();
             fileStatusDocument.setStatusUpload(Boolean.TRUE);
             fileStatusDocument.setMessage(projectFileType + " upload " + status + " file name" + multipartFile.getOriginalFilename());
+            fileStatusDocument.setFileSize(multipartFile.getSize());
+            fileStatusDocument.setFileName(multipartFile.getOriginalFilename());
             if (status.equals(SUCCESS)) {
                 fileStatusDocument.setFileLocation(fileBaseLocation + location);
             }
