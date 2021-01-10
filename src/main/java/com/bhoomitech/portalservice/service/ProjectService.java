@@ -5,6 +5,7 @@ import com.bhoomitech.portalservice.model.Project;
 import com.bhoomitech.portalservice.repository.ProjectRepository;
 import com.bhoomitech.portalservice.util.ProjectConverter;
 import lombok.NonNull;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,5 +32,12 @@ public class ProjectService {
 
     public List<Project> getProjectByUserHref(String userHref) {
         return projectRepository.findAllByUserHref(userHref);
+    }
+
+    public ResponseEntity<String> checkProjectName(String projectName) {
+        if (projectRepository.findByProjectName(projectName).isPresent()) {
+            return ResponseEntity.badRequest().body("not available");
+        }
+        return ResponseEntity.ok("available");
     }
 }

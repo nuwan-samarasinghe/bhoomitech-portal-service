@@ -3,6 +3,7 @@ package com.bhoomitech.portalservice.controller;
 import com.bhoomitech.portalservice.apidocs.project.ProjectDocument;
 import com.bhoomitech.portalservice.service.ProjectService;
 import com.bhoomitech.portalservice.util.ProjectConverter;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,12 @@ public class ProjectController {
                 .stream()
                 .map(ProjectConverter.projectProjectDocumentFunction)
                 .collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
+    @GetMapping(value = "/project")
+    public ResponseEntity<String> checkProjectName(@RequestParam("projectName") String projectName) {
+        return projectService.checkProjectName(projectName);
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")

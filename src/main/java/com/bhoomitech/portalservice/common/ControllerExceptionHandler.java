@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;
 
@@ -24,11 +25,20 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = {SQLIntegrityConstraintViolationException.class})
-    public ResponseEntity<ErrorMessage> dbException(Exception ex, WebRequest request) {
+    public ResponseEntity<ErrorMessage> dbConstraintException(Exception ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(
                 HttpStatus.BAD_REQUEST.value(),
                 new Date(),
                 "user profile exists please re try with a new name");
+        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {SQLException.class})
+    public ResponseEntity<ErrorMessage> dbException(Exception ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                new Date(),
+                "an error occurred while processing the data please try again later");
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 }
