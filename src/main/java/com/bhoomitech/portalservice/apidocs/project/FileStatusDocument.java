@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class FileStatusDocument {
     private Boolean statusUpload;
+    private String fileLocation;
     private String message;
 }
