@@ -1,3 +1,6 @@
 spring:
-  application:
-    name: portal
+  cloud:
+    config:
+      uri: http://54.175.165.177:12001
+  profiles:
+    active: dev

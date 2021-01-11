@@ -1,23 +1,29 @@
 package com.bhoomitech.portalservice.controller;
 
+import com.bhoomitech.portalservice.model.FileStatus;
 import com.bhoomitech.portalservice.apidocs.project.ProjectDocument;
+import com.bhoomitech.portalservice.apidocs.project.ProjectFileInfoDocument;
+import com.bhoomitech.portalservice.model.ProjectFileType;
+import com.bhoomitech.portalservice.service.FileUploadService;
 import com.bhoomitech.portalservice.service.ProjectService;
 import com.bhoomitech.portalservice.util.ProjectConverter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
 public class ProjectController {
 
     public static final String CREATE = "CREATE";
-    public static final String UPDATE = "UPDATE";
     private final ProjectService projectService;
 
-    public ProjectController(ProjectService projectService) {
+    public ProjectController(
+            ProjectService projectService) {
         this.projectService = projectService;
     }
 
@@ -38,7 +44,7 @@ public class ProjectController {
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
-    @GetMapping(value = "/project/user")
+    @PostMapping(value = "/project/user")
     public @ResponseBody
     List<ProjectDocument> getAllProjectFileInfoListForUserHref(@RequestParam("userHref") String userHref) {
         return projectService
@@ -58,11 +64,14 @@ public class ProjectController {
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
-    @PutMapping(value = "/project")
-    public @ResponseBody
-    ProjectDocument updateProjectFileInfoList(@RequestBody ProjectDocument projectFileInfoDocument) {
-        return projectService
-                .saveOrUpdateProject(ProjectConverter.projectDocumentProjectFunction
-                        .apply(projectFileInfoDocument), UPDATE);
+    @PostMapping(value = "/project-info")
+    public ProjectFileInfoDocument createProjectFileInfoDocument(
+            @RequestParam("projectName") String projectName,
+            @RequestParam("projectFileType") ProjectFileType projectFileType,
+            @RequestParam("files") MultipartFile[] files,
+            ProjectFileInfoDocument projectFileInfoDocument
+    ) {
+        this.projectService.createProjectFileInfo(projectName, projectFileInfoDocument, projectFileType, files);
+        return projectFileInfoDocument;
     }
 }

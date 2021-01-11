@@ -2,8 +2,7 @@ package com.bhoomitech.portalservice.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.bhoomitech.portalservice.apidocs.project.FileStatusDocument;
-import com.bhoomitech.portalservice.apidocs.project.FileUploadStatusDocument;
+import com.bhoomitech.portalservice.model.FileStatus;
 import com.bhoomitech.portalservice.common.PortalServiceException;
 import com.bhoomitech.portalservice.model.ProjectFileType;
 import lombok.NonNull;
@@ -45,61 +44,35 @@ public class FileUploadService {
         this.amazonS3Client = amazonS3Client;
     }
 
-    public FileUploadStatusDocument fileUpload(MultipartFile[] knownFiles, MultipartFile[] unKnownFiles, String companyName) {
-        FileUploadStatusDocument fileUploadStatusDocument = new FileUploadStatusDocument();
-        if (validateFilesBeforeUpload(knownFiles, unKnownFiles, companyName, fileUploadStatusDocument)) {
-            for (MultipartFile multipartFile : knownFiles) {
-                uploadFile(companyName, multipartFile, fileUploadStatusDocument, ProjectFileType.UNKNOWN_FILE);
-            }
-            for (MultipartFile multipartFile : unKnownFiles) {
-                uploadFile(companyName, multipartFile, fileUploadStatusDocument, ProjectFileType.KNOWN_FILE);
+    public FileStatus fileUpload(
+            @NonNull MultipartFile[] file,
+            @NonNull String projectName,
+            @NonNull ProjectFileType projectFileType) {
+        FileStatus fileStatus = new FileStatus();
+        fileStatus.setProjectFileType(projectFileType);
+        validateFilesBeforeUpload(file, fileStatus);
+        if (Objects.isNull(fileStatus.getErrorMessage())) {
+            for (MultipartFile multipartFile : file) {
+                uploadFile(projectName, multipartFile, fileStatus, projectFileType);
             }
         }
-        return fileUploadStatusDocument;
+        return fileStatus;
     }
 
-    private boolean validateFilesBeforeUpload(
-            MultipartFile[] knownFiles,
-            MultipartFile[] unKnownFiles,
-            String companyName,
-            FileUploadStatusDocument fileUploadStatusDocument) {
-        if (!Objects.nonNull(companyName)) {
-            fileUploadStatusDocument.setValidationMessage("No company name provided");
-            return false;
+    private void validateFilesBeforeUpload(MultipartFile[] files, FileStatus fileStatus) {
+        if (!Objects.nonNull(files)) {
+            fileStatus.setErrorMessage("please provide the company name");
         }
-        if (!Objects.nonNull(knownFiles)) {
-            fileUploadStatusDocument.setValidationMessage("empty known files provided");
-            return false;
+        if (files.length > maxFileUploadLimit) {
+            fileStatus.setErrorMessage("exceeded the max file upload count");
         }
-        if (!Objects.nonNull(unKnownFiles)) {
-            fileUploadStatusDocument.setValidationMessage("empty un-known files provided");
-            return false;
+        if (files.length < minFileUploadLimit) {
+            fileStatus.setErrorMessage("need at least single file provided for upload");
         }
-        if (knownFiles.length > maxFileUploadLimit) {
-            fileUploadStatusDocument.setValidationMessage("more than 5 files provided for upload");
-            return false;
-        }
-        if (knownFiles.length < minFileUploadLimit) {
-            fileUploadStatusDocument.setValidationMessage("need at least single file provided for upload");
-            return false;
-        }
-        if (unKnownFiles.length > maxFileUploadLimit) {
-            fileUploadStatusDocument.setValidationMessage("more than 5 files provided for upload");
-            return false;
-        }
-        if (unKnownFiles.length < minFileUploadLimit) {
-            fileUploadStatusDocument.setValidationMessage("need at least single file provided for upload");
-            return false;
-        }
-        Boolean isValidFileAvailable = checkFileExt(knownFiles, fileUploadStatusDocument);
-        if (!isValidFileAvailable) return false;
-        isValidFileAvailable = checkFileExt(unKnownFiles, fileUploadStatusDocument);
-        if (!isValidFileAvailable) return false;
-        fileUploadStatusDocument.setValidationMessage("validation success full");
-        return true;
+        checkFileExt(files, fileStatus);
     }
 
-    private Boolean checkFileExt(MultipartFile[] knownFiles, FileUploadStatusDocument fileUploadStatusDocument) {
+    private void checkFileExt(MultipartFile[] knownFiles, FileStatus fileStatus) {
         boolean isValidFileAvailable = false;
         for (MultipartFile file : knownFiles) {
             String fileExt = FilenameUtils.getExtension(file.getOriginalFilename());
@@ -109,61 +82,32 @@ public class FileUploadService {
             break;
         }
         if (!isValidFileAvailable) {
-            fileUploadStatusDocument.setValidationMessage("at least there should be a file ext like Ex.20n");
+            fileStatus.setErrorMessage("at least there should be a file ext with Ex.20n");
         }
-        return isValidFileAvailable;
     }
 
     private void uploadFile(
-            @NonNull String companyName,
+            @NonNull String projectName,
             @NonNull MultipartFile multipartFile,
-            @NonNull FileUploadStatusDocument fileUploadStatusDocument,
+            @NonNull FileStatus fileStatus,
             @NonNull ProjectFileType projectFileType) {
         File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(multipartFile.getBytes());
             String location = "";
             if (projectFileType == ProjectFileType.UNKNOWN_FILE) {
-                location = companyName + UNKNOWN + multipartFile.getOriginalFilename();
+                location = projectName + UNKNOWN + multipartFile.getOriginalFilename();
             } else if (projectFileType == ProjectFileType.KNOWN_FILE) {
-                location = companyName + KNOWN + multipartFile.getOriginalFilename();
+                location = projectName + KNOWN + multipartFile.getOriginalFilename();
             }
             amazonS3Client.putObject(new PutObjectRequest(bucketName, location, file));
             log.info("upload success file name {}", multipartFile.getOriginalFilename());
-            createStatusDocument(fileUploadStatusDocument, multipartFile, projectFileType, SUCCESS, location);
+            fileStatus.getFileNames().add(multipartFile.getOriginalFilename());
+            fileStatus.getFileLocations().add(fileBaseLocation + location);
         } catch (IOException e) {
             log.error("error [" + e.getMessage() + "] occurred while uploading [" + multipartFile.getOriginalFilename() + "] ");
-            createStatusDocument(fileUploadStatusDocument, multipartFile, projectFileType, ERROR, null);
+            fileStatus.setErrorMessage(projectFileType + " upload error file name" + multipartFile.getOriginalFilename());
             throw new PortalServiceException("error [" + e.getMessage() + "] occurred while uploading [" + multipartFile.getOriginalFilename() + "] ", e);
-        }
-    }
-
-    private void createStatusDocument(
-            @NonNull FileUploadStatusDocument fileUploadStatusDocument,
-            @NonNull MultipartFile multipartFile,
-            @NonNull ProjectFileType projectFileType,
-            @NonNull String status,
-            @NonNull String location) {
-        if (projectFileType == ProjectFileType.UNKNOWN_FILE) {
-            FileStatusDocument fileStatusDocument = new FileStatusDocument();
-            fileStatusDocument.setStatusUpload(Boolean.TRUE);
-            fileStatusDocument.setMessage(projectFileType + " upload " + status + " file name" + multipartFile.getOriginalFilename());
-            fileStatusDocument.setFileSize(multipartFile.getSize());
-            fileStatusDocument.setFileName(multipartFile.getOriginalFilename());
-            if (status.equals(SUCCESS)) {
-                fileStatusDocument.setFileLocation(fileBaseLocation + location);
-            }
-            fileUploadStatusDocument.getStatusUnknownUpload().add(fileStatusDocument);
-        } else if (projectFileType == ProjectFileType.KNOWN_FILE) {
-            FileStatusDocument fileStatusDocument = new FileStatusDocument();
-            fileStatusDocument.setStatusUpload(Boolean.TRUE);
-            fileStatusDocument.setMessage(projectFileType + " upload " + status + " file name" + multipartFile.getOriginalFilename());
-            fileStatusDocument.setFileSize(multipartFile.getSize());
-            fileStatusDocument.setFileName(multipartFile.getOriginalFilename());
-            if (status.equals(SUCCESS)) {
-                fileStatusDocument.setFileLocation(fileBaseLocation + location);
-            }
-            fileUploadStatusDocument.getStatusKnownUpload().add(fileStatusDocument);
         }
     }
 }

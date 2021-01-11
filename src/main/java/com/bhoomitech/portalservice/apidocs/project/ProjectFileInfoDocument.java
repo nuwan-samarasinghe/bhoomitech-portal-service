@@ -5,6 +5,8 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class ProjectFileInfoDocument {
@@ -17,10 +19,10 @@ public class ProjectFileInfoDocument {
     private String basePointId;
     @NotBlank(message = "file name is a mandatory field")
     @NotEmpty(message = "file name is a mandatory field")
-    private String fileName;
+    private List<String> fileNames = new ArrayList<>();
     @NotBlank(message = "file location is a mandatory field")
     @NotEmpty(message = "file location is a mandatory field")
-    private String fileLocation;
+    private List<String> fileLocations = new ArrayList<>();
     @NotBlank(message = "antenna height is a mandatory field")
     @NotEmpty(message = "antenna height is a mandatory field")
     private String antennaHeight;
@@ -33,4 +35,5 @@ public class ProjectFileInfoDocument {
     private String gpsCoordinatesLat;
     private String gpsCoordinatesLon;
     private String gpsCoordinatesZ;
+    private String message;
 }

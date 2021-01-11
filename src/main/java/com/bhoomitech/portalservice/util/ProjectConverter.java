@@ -1,5 +1,6 @@
 package com.bhoomitech.portalservice.util;
 
+import com.bhoomitech.portalservice.model.FileStatus;
 import com.bhoomitech.portalservice.apidocs.project.ProjectDocument;
 import com.bhoomitech.portalservice.apidocs.project.ProjectFileInfoDocument;
 import com.bhoomitech.portalservice.model.Project;
@@ -7,10 +8,13 @@ import com.bhoomitech.portalservice.model.ProjectFileInfo;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class ProjectConverter {
+
     public static Function<Project, ProjectDocument> projectProjectDocumentFunction = project -> {
         ProjectDocument projectDocument = new ProjectDocument();
         projectDocument.setProjectName(project.getProjectName());
@@ -26,8 +30,10 @@ public final class ProjectConverter {
             projectFileInfoDocument.setProjectInfoId(projectFileInfo.getId());
             projectFileInfoDocument.setProjectFileType(projectFileInfo.getProjectFileType());
             projectFileInfoDocument.setBasePointId(projectFileInfo.getBasePointId());
-            projectFileInfoDocument.setFileName(projectFileInfo.getFileName());
-            projectFileInfoDocument.setFileLocation(projectFileInfo.getFileLocation());
+            Arrays.stream(projectFileInfo.getFileName().split(","))
+                    .forEach(fileName -> projectFileInfoDocument.getFileNames().add(fileName));
+            Arrays.stream(projectFileInfo.getFileLocation().split(","))
+                    .forEach(fileLocation -> projectFileInfoDocument.getFileLocations().add(fileLocation));
             projectFileInfoDocument.setAntennaHeight(projectFileInfo.getAntennaHeight());
             projectFileInfoDocument.setAntennaBrand(projectFileInfo.getAntennaBrand());
             projectFileInfoDocument.setAntennaModel(projectFileInfo.getAntennaModel());
@@ -55,8 +61,8 @@ public final class ProjectConverter {
             projectFileInfo.setId(projectFileInfoDocument.getProjectInfoId());
             projectFileInfo.setProjectFileType(projectFileInfoDocument.getProjectFileType());
             projectFileInfo.setBasePointId(projectFileInfoDocument.getBasePointId());
-            projectFileInfo.setFileName(projectFileInfoDocument.getFileName());
-            projectFileInfo.setFileLocation(projectFileInfoDocument.getFileLocation());
+            projectFileInfo.setFileName(String.join(",", projectFileInfoDocument.getFileNames()));
+            projectFileInfo.setFileLocation(String.join(",", projectFileInfoDocument.getFileLocations()));
             projectFileInfo.setAntennaHeight(projectFileInfoDocument.getAntennaHeight());
             projectFileInfo.setAntennaBrand(projectFileInfoDocument.getAntennaBrand());
             projectFileInfo.setAntennaModel(projectFileInfoDocument.getAntennaModel());
@@ -67,4 +73,38 @@ public final class ProjectConverter {
         });
         return project;
     };
+
+    public static BiFunction<FileStatus, ProjectFileInfoDocument, ProjectFileInfo> fileStatusDocumentProjectFileInfoDocumentProjectFileInfo =
+            (fileStatusDocument, projectFileInfoDocument) -> {
+                ProjectFileInfo projectFileInfo = new ProjectFileInfo();
+                projectFileInfo.setProjectFileType(fileStatusDocument.getProjectFileType());
+                projectFileInfo.setBasePointId(projectFileInfoDocument.getBasePointId());
+                projectFileInfo.setFileName(String.join(",", fileStatusDocument.getFileNames()));
+                projectFileInfo.setFileLocation(String.join(",", fileStatusDocument.getFileLocations()));
+                projectFileInfo.setAntennaHeight(projectFileInfoDocument.getAntennaHeight());
+                projectFileInfo.setAntennaBrand(projectFileInfoDocument.getAntennaBrand());
+                projectFileInfo.setAntennaModel(projectFileInfoDocument.getAntennaModel());
+                projectFileInfo.setGpsCoordinatesLat(projectFileInfoDocument.getGpsCoordinatesLat());
+                projectFileInfo.setGpsCoordinatesLon(projectFileInfoDocument.getGpsCoordinatesLon());
+                projectFileInfo.setGpsCoordinatesZ(projectFileInfoDocument.getGpsCoordinatesZ());
+                return projectFileInfo;
+            };
+
+    public static Function<ProjectFileInfo, ProjectFileInfoDocument> projectFileInfoProjectFileInfoDocument =
+            projectFileInfo -> {
+                ProjectFileInfoDocument projectFileInfoDocument = new ProjectFileInfoDocument();
+                projectFileInfoDocument.setProjectFileType(projectFileInfo.getProjectFileType());
+                projectFileInfoDocument.setBasePointId(projectFileInfoDocument.getBasePointId());
+                Arrays.stream(projectFileInfo.getFileName().split(","))
+                        .forEach(fileName -> projectFileInfoDocument.getFileNames().add(fileName));
+                Arrays.stream(projectFileInfo.getFileLocation().split(","))
+                        .forEach(fileLocation -> projectFileInfoDocument.getFileLocations().add(fileLocation));
+                projectFileInfoDocument.setAntennaHeight(projectFileInfo.getAntennaHeight());
+                projectFileInfoDocument.setAntennaBrand(projectFileInfo.getAntennaBrand());
+                projectFileInfoDocument.setAntennaModel(projectFileInfo.getAntennaModel());
+                projectFileInfoDocument.setGpsCoordinatesLat(projectFileInfo.getGpsCoordinatesLat());
+                projectFileInfoDocument.setGpsCoordinatesLon(projectFileInfo.getGpsCoordinatesLon());
+                projectFileInfoDocument.setGpsCoordinatesZ(projectFileInfo.getGpsCoordinatesZ());
+                return projectFileInfoDocument;
+            };
 }
