@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class ProjectController {
 
     public static final String CREATE = "CREATE";
+    public static final String UPDATE = "UPDATE";
     private final ProjectService projectService;
 
     public ProjectController(
@@ -30,7 +31,7 @@ public class ProjectController {
     @PreAuthorize("hasRole('ROLE_admin')")
     @GetMapping(value = "/project/all")
     public @ResponseBody
-    List<ProjectDocument> getAllProjectFileInfoList() {
+    List<ProjectDocument> getProjects() {
         return projectService.getProject()
                 .stream()
                 .map(ProjectConverter.projectProjectDocumentFunction)
@@ -39,14 +40,14 @@ public class ProjectController {
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
     @GetMapping(value = "/project")
-    public ResponseEntity<String> checkProjectName(@RequestParam("projectName") String projectName) {
+    public ResponseEntity<String> checkProjectNameIsAvailable(@RequestParam("projectName") String projectName) {
         return projectService.checkProjectName(projectName);
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
     @PostMapping(value = "/project/user")
     public @ResponseBody
-    List<ProjectDocument> getAllProjectFileInfoListForUserHref(@RequestParam("userHref") String userHref) {
+    List<ProjectDocument> getProjectsForUserHref(@RequestParam("userHref") String userHref) {
         return projectService
                 .getProjectByUserHref(userHref)
                 .stream()
@@ -57,10 +58,19 @@ public class ProjectController {
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
     @PostMapping(value = "/project")
     public @ResponseBody
-    ProjectDocument createProjectFileInfoList(@RequestBody ProjectDocument projectFileInfoDocument) {
+    ProjectDocument createProject(@RequestBody ProjectDocument projectFileInfoDocument) {
         return projectService
                 .saveOrUpdateProject(ProjectConverter.projectDocumentProjectFunction
                         .apply(projectFileInfoDocument), CREATE);
+    }
+
+    @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
+    @PutMapping(value = "/project")
+    public @ResponseBody
+    ProjectDocument updateProject(@RequestBody ProjectDocument projectFileInfoDocument) {
+        return projectService
+                .saveOrUpdateProject(ProjectConverter.projectDocumentProjectFunction
+                        .apply(projectFileInfoDocument), UPDATE);
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
