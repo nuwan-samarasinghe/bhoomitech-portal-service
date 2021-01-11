@@ -19,7 +19,7 @@ public class ProjectFileInfo {
     @Column(name = "file_name")
     private String fileName;
     @Lob
-    @Column(name = "file_location", length = 1000)
+    @Column(name = "file_location")
     private String fileLocation;
     @Column(name = "antenna_height")
     private String antennaHeight;

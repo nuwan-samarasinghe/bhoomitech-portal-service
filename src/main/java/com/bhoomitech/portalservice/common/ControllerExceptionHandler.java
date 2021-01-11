@@ -2,12 +2,14 @@ package com.bhoomitech.portalservice.common;
 
 import com.amazonaws.services.iot.model.ResourceNotFoundException;
 import com.bhoomitech.portalservice.apidocs.project.ErrorMessage;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.naming.SizeLimitExceededException;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;
@@ -40,5 +42,14 @@ public class ControllerExceptionHandler {
                 new Date(),
                 "an error occurred while processing the data please try again later");
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {FileUploadException.class})
+    public ResponseEntity<ErrorMessage> sizeLimitException(Exception ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.BAD_REQUEST.value(),
+                new Date(),
+                "limit is 100MB please compress the file to that limit");
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }
