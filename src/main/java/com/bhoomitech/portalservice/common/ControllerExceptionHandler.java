@@ -17,7 +17,7 @@ import java.util.Date;
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
-    @ExceptionHandler(value = {ResourceNotFoundException.class})
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorMessage> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(
                 HttpStatus.NOT_FOUND.value(),
@@ -26,7 +26,7 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = {SQLIntegrityConstraintViolationException.class})
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<ErrorMessage> dbConstraintException(Exception ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(
                 HttpStatus.BAD_REQUEST.value(),
@@ -35,7 +35,7 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = {SQLException.class})
+    @ExceptionHandler(SQLException.class)
     public ResponseEntity<ErrorMessage> dbException(Exception ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -44,7 +44,7 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = {FileUploadException.class})
+    @ExceptionHandler(FileUploadException.class)
     public ResponseEntity<ErrorMessage> sizeLimitException(Exception ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(
                 HttpStatus.BAD_REQUEST.value(),

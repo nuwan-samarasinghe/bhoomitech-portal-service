@@ -40,8 +40,8 @@ public class ProjectService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ProjectDocument saveOrUpdateProject(@NonNull Project project, @NonNull String status) {
-        return ProjectConverter.projectProjectDocumentFunction.apply(projectRepository.save(project));
+    public ProjectDocument saveOrUpdateProject(@NonNull Project project) {
+        return ProjectConverter.projectProjectDocumentFunction.apply(projectRepository.save(project), true);
     }
 
     public List<Project> getProjectByUserHref(String userHref) {
@@ -93,5 +93,10 @@ public class ProjectService {
         } else {
             projectFileInfoDocument.setMessage("project not exists");
         }
+    }
+
+    public Project getProjectByProjectName(String projectName) {
+        return projectRepository.findByProjectName(projectName).isPresent() ?
+                projectRepository.findByProjectName(projectName).get() : new Project();
     }
 }

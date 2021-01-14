@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 public final class ProjectConverter {
 
-    public static Function<Project, ProjectDocument> projectProjectDocumentFunction = project -> {
+    public static BiFunction<Project, Boolean, ProjectDocument> projectProjectDocumentFunction = (project, isProjectOnly) -> {
         ProjectDocument projectDocument = new ProjectDocument();
         projectDocument.setProjectName(project.getProjectName());
         projectDocument.setProjectStartTimestamp(project.getProjectStartTimestamp().toString());
@@ -25,23 +25,25 @@ public final class ProjectConverter {
         projectDocument.setAgreementStatus(project.getAgreementStatus());
         projectDocument.setPrice(project.getPrice());
         projectDocument.setCreatedTimestamp(project.getCreatedTimestamp().toString());
-        project.getFileInfos().forEach(projectFileInfo -> {
-            ProjectFileInfoDocument projectFileInfoDocument = new ProjectFileInfoDocument();
-            projectFileInfoDocument.setProjectInfoId(projectFileInfo.getId());
-            projectFileInfoDocument.setProjectFileType(projectFileInfo.getProjectFileType());
-            projectFileInfoDocument.setBasePointId(projectFileInfo.getBasePointId());
-            Arrays.stream(projectFileInfo.getFileName().split(","))
-                    .forEach(fileName -> projectFileInfoDocument.getFileNames().add(fileName));
-            Arrays.stream(projectFileInfo.getFileLocation().split(","))
-                    .forEach(fileLocation -> projectFileInfoDocument.getFileLocations().add(fileLocation));
-            projectFileInfoDocument.setAntennaHeight(projectFileInfo.getAntennaHeight());
-            projectFileInfoDocument.setAntennaBrand(projectFileInfo.getAntennaBrand());
-            projectFileInfoDocument.setAntennaModel(projectFileInfo.getAntennaModel());
-            projectFileInfoDocument.setGpsCoordinatesLat(projectFileInfo.getGpsCoordinatesLat());
-            projectFileInfoDocument.setGpsCoordinatesLon(projectFileInfo.getGpsCoordinatesLon());
-            projectFileInfoDocument.setGpsCoordinatesZ(projectFileInfo.getGpsCoordinatesZ());
-            projectDocument.getProjectFileInfoDocuments().add(projectFileInfoDocument);
-        });
+        if (!isProjectOnly) {
+            project.getFileInfos().forEach(projectFileInfo -> {
+                ProjectFileInfoDocument projectFileInfoDocument = new ProjectFileInfoDocument();
+                projectFileInfoDocument.setProjectInfoId(projectFileInfo.getId());
+                projectFileInfoDocument.setProjectFileType(projectFileInfo.getProjectFileType());
+                projectFileInfoDocument.setBasePointId(projectFileInfo.getBasePointId());
+                Arrays.stream(projectFileInfo.getFileName().split(","))
+                        .forEach(fileName -> projectFileInfoDocument.getFileNames().add(fileName));
+                Arrays.stream(projectFileInfo.getFileLocation().split(","))
+                        .forEach(fileLocation -> projectFileInfoDocument.getFileLocations().add(fileLocation));
+                projectFileInfoDocument.setAntennaHeight(projectFileInfo.getAntennaHeight());
+                projectFileInfoDocument.setAntennaBrand(projectFileInfo.getAntennaBrand());
+                projectFileInfoDocument.setAntennaModel(projectFileInfo.getAntennaModel());
+                projectFileInfoDocument.setGpsCoordinatesLat(projectFileInfo.getGpsCoordinatesLat());
+                projectFileInfoDocument.setGpsCoordinatesLon(projectFileInfo.getGpsCoordinatesLon());
+                projectFileInfoDocument.setGpsCoordinatesZ(projectFileInfo.getGpsCoordinatesZ());
+                projectDocument.getProjectFileInfoDocuments().add(projectFileInfoDocument);
+            });
+        }
         return projectDocument;
     };
 

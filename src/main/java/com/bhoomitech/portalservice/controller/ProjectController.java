@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -31,28 +32,38 @@ public class ProjectController {
     @PreAuthorize("hasRole('ROLE_admin')")
     @GetMapping(value = "/project/all")
     public @ResponseBody
-    List<ProjectDocument> getProjects() {
-        return projectService.getProject()
-                .stream()
-                .map(ProjectConverter.projectProjectDocumentFunction)
-                .collect(Collectors.toList());
+    List<ProjectDocument> getProjects(@RequestParam("projectOnly") boolean projectOnly) {
+        List<ProjectDocument> projectDocuments = new ArrayList<>();
+        projectService.getProject()
+                .forEach(project ->
+                        projectDocuments.add(ProjectConverter.projectProjectDocumentFunction.apply(project, projectOnly)));
+        return projectDocuments;
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
-    @GetMapping(value = "/project")
-    public ResponseEntity<String> checkProjectNameIsAvailable(@RequestParam("projectName") String projectName) {
+    @GetMapping(value = "/project/{projectName}")
+    public ResponseEntity<String> checkProjectNameIsAvailable(@PathVariable String projectName) {
         return projectService.checkProjectName(projectName);
+    }
+
+    @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
+    @PostMapping(value = "/project/detail")
+    public ProjectDocument getProjectInformation(@RequestParam("projectName") String projectName) {
+        return ProjectConverter.projectProjectDocumentFunction.apply(projectService
+                .getProjectByProjectName(projectName), false);
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
     @PostMapping(value = "/project/user")
     public @ResponseBody
-    List<ProjectDocument> getProjectsForUserHref(@RequestParam("userHref") String userHref) {
-        return projectService
+    List<ProjectDocument> getProjectsForUserHref(@RequestParam("userHref") String userHref,
+                                                 @RequestParam("projectOnly") boolean projectOnly) {
+        List<ProjectDocument> projectDocuments = new ArrayList<>();
+        projectService
                 .getProjectByUserHref(userHref)
-                .stream()
-                .map(ProjectConverter.projectProjectDocumentFunction)
-                .collect(Collectors.toList());
+                .forEach(project ->
+                        projectDocuments.add(ProjectConverter.projectProjectDocumentFunction.apply(project, projectOnly)));
+        return projectDocuments;
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
@@ -61,7 +72,7 @@ public class ProjectController {
     ProjectDocument createProject(@RequestBody ProjectDocument projectFileInfoDocument) {
         return projectService
                 .saveOrUpdateProject(ProjectConverter.projectDocumentProjectFunction
-                        .apply(projectFileInfoDocument), CREATE);
+                        .apply(projectFileInfoDocument));
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
@@ -70,7 +81,7 @@ public class ProjectController {
     ProjectDocument updateProject(@RequestBody ProjectDocument projectFileInfoDocument) {
         return projectService
                 .saveOrUpdateProject(ProjectConverter.projectDocumentProjectFunction
-                        .apply(projectFileInfoDocument), UPDATE);
+                        .apply(projectFileInfoDocument));
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")

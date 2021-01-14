@@ -28,7 +28,7 @@ public class Project {
     private String price;
     @Column(name = "created_timestamp")
     private Timestamp createdTimestamp;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private List<ProjectFileInfo> fileInfos;
 }
