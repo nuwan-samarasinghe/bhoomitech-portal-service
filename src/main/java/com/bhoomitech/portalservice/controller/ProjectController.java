@@ -1,10 +1,8 @@
 package com.bhoomitech.portalservice.controller;
 
-import com.bhoomitech.portalservice.model.FileStatus;
 import com.bhoomitech.portalservice.apidocs.project.ProjectDocument;
 import com.bhoomitech.portalservice.apidocs.project.ProjectFileInfoDocument;
 import com.bhoomitech.portalservice.model.ProjectFileType;
-import com.bhoomitech.portalservice.service.FileUploadService;
 import com.bhoomitech.portalservice.service.ProjectService;
 import com.bhoomitech.portalservice.util.ProjectConverter;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RestController
 public class ProjectController {
