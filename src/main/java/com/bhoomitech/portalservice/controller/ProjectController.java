@@ -5,6 +5,7 @@ import com.bhoomitech.portalservice.apidocs.project.ProjectFileInfoDocument;
 import com.bhoomitech.portalservice.model.ProjectFileType;
 import com.bhoomitech.portalservice.service.ProjectService;
 import com.bhoomitech.portalservice.util.ProjectConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestController
 public class ProjectController {
 
@@ -88,6 +90,9 @@ public class ProjectController {
             @RequestParam("files") MultipartFile[] files,
             ProjectFileInfoDocument projectFileInfoDocument
     ) {
+        log.info("project name is {}", projectName);
+        log.info("project type is {}", projectFileType);
+        log.info("project files are {}", files.length);
         this.projectService.createProjectFileInfo(projectName, projectFileInfoDocument, projectFileType, files);
         return projectFileInfoDocument;
     }
