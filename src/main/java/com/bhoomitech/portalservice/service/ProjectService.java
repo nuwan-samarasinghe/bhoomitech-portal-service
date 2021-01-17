@@ -26,6 +26,7 @@ import java.util.Optional;
 @Service
 public class ProjectService {
 
+    public static final String AUTH_USER = "/auth/user/";
     private final ProjectRepository projectRepository;
 
     private final FileUploadService fileUploadService;
@@ -48,8 +49,8 @@ public class ProjectService {
         return projectRepository.findAllByUserHref(userHref);
     }
 
-    public ResponseEntity<String> checkProjectName(String projectName) {
-        if (projectRepository.findByProjectName(projectName).isPresent()) {
+    public ResponseEntity<String> checkProjectName(String projectName, String userHref) {
+        if (projectRepository.findByProjectNameAndUserHref(projectName, userHref).isPresent()) {
             return ResponseEntity.badRequest().body("not available");
         }
         return ResponseEntity.ok("available");
@@ -57,6 +58,7 @@ public class ProjectService {
 
     @Transactional(rollbackFor = Exception.class)
     public void createProjectFileInfo(
+            String additionalDirStructure,
             String projectName,
             ProjectFileInfoDocument projectFileInfoDocument,
             ProjectFileType projectFileType,
@@ -70,7 +72,7 @@ public class ProjectService {
                     .filter(projectFileInfo -> {
                         return projectFileInfo.getBasePointId().equals(projectFileInfoDocument.getBasePointId());
                     }).findFirst().isPresent()) {
-                FileStatus fileStatus = this.fileUploadService.fileUpload(files, projectName, projectFileType);
+                FileStatus fileStatus = this.fileUploadService.fileUpload(additionalDirStructure, files, projectName, projectFileType);
                 ProjectFileInfo projectFileInfo = ProjectConverter
                         .fileStatusDocumentProjectFileInfoDocumentProjectFileInfo
                         .apply(fileStatus, projectFileInfoDocument);

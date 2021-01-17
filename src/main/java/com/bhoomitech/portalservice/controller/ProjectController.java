@@ -28,7 +28,7 @@ public class ProjectController {
     }
 
     @PreAuthorize("hasRole('ROLE_admin')")
-    @GetMapping(value = "/project/all")
+    @PostMapping(value = "/project/all")
     public @ResponseBody
     List<ProjectDocument> getProjects(@RequestParam("projectOnly") boolean projectOnly) {
         List<ProjectDocument> projectDocuments = new ArrayList<>();
@@ -39,9 +39,11 @@ public class ProjectController {
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
-    @GetMapping(value = "/project/{projectName}")
-    public ResponseEntity<String> checkProjectNameIsAvailable(@PathVariable String projectName) {
-        return projectService.checkProjectName(projectName);
+    @PostMapping(value = "/project/validity")
+    public ResponseEntity<String> checkProjectNameIsAvailable(
+            @RequestParam("projectName") String projectName,
+            @RequestParam("userHref") String userHref) {
+        return projectService.checkProjectName(projectName, userHref);
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
@@ -85,15 +87,17 @@ public class ProjectController {
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
     @PostMapping(value = "/project-info")
     public ProjectFileInfoDocument createProjectFileInfoDocument(
+            @RequestParam("additionalDirStructure") String additionalDirStructure,
             @RequestParam("projectName") String projectName,
             @RequestParam("projectFileType") ProjectFileType projectFileType,
             @RequestParam("files") MultipartFile[] files,
             ProjectFileInfoDocument projectFileInfoDocument
     ) {
+        log.info("project additional dir structure is {}", additionalDirStructure);
         log.info("project name is {}", projectName);
         log.info("project type is {}", projectFileType);
         log.info("project files are {}", files.length);
-        this.projectService.createProjectFileInfo(projectName, projectFileInfoDocument, projectFileType, files);
+        this.projectService.createProjectFileInfo(additionalDirStructure, projectName, projectFileInfoDocument, projectFileType, files);
         return projectFileInfoDocument;
     }
 }

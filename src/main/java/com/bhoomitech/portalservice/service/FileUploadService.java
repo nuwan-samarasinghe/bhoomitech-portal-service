@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class FileUploadService {
     }
 
     public FileStatus fileUpload(
+            String additionalDirStructure,
             @NonNull MultipartFile[] file,
             @NonNull String projectName,
             @NonNull ProjectFileType projectFileType) {
@@ -53,7 +55,7 @@ public class FileUploadService {
         validateFilesBeforeUpload(file, fileStatus);
         if (Objects.isNull(fileStatus.getErrorMessage())) {
             for (MultipartFile multipartFile : file) {
-                uploadFile(projectName, multipartFile, fileStatus, projectFileType);
+                uploadFile(additionalDirStructure, projectName, multipartFile, fileStatus, projectFileType);
             }
         }
         return fileStatus;
@@ -87,18 +89,20 @@ public class FileUploadService {
     }
 
     private void uploadFile(
+            String additionalDirStructure,
             @NonNull String projectName,
             @NonNull MultipartFile multipartFile,
             @NonNull FileStatus fileStatus,
             @NonNull ProjectFileType projectFileType) {
+        projectName = projectName.replaceAll(" ", "_");
         File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(multipartFile.getBytes());
             String location = "";
             if (projectFileType == ProjectFileType.UNKNOWN_FILE) {
-                location = projectName + UNKNOWN + multipartFile.getOriginalFilename();
+                location = additionalDirStructure != null ? additionalDirStructure : "" + projectName + UNKNOWN + multipartFile.getOriginalFilename();
             } else if (projectFileType == ProjectFileType.KNOWN_FILE) {
-                location = projectName + KNOWN + multipartFile.getOriginalFilename();
+                location = additionalDirStructure != null ? additionalDirStructure : "" + projectName + KNOWN + multipartFile.getOriginalFilename();
             }
             amazonS3Client.putObject(new PutObjectRequest(bucketName, location, file));
             log.info("upload success file name {}", multipartFile.getOriginalFilename());
