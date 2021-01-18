@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -95,14 +94,17 @@ public class FileUploadService {
             @NonNull FileStatus fileStatus,
             @NonNull ProjectFileType projectFileType) {
         projectName = projectName.replaceAll(" ", "_");
+        log.info("project name for the s3 {}", projectName);
         File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(multipartFile.getBytes());
             String location = "";
             if (projectFileType == ProjectFileType.UNKNOWN_FILE) {
-                location = additionalDirStructure != null ? additionalDirStructure : "" + projectName + UNKNOWN + multipartFile.getOriginalFilename();
+                location = (additionalDirStructure != null ? additionalDirStructure : "") + projectName + UNKNOWN + multipartFile.getOriginalFilename();
+                log.info("generating unknown file location {}", location);
             } else if (projectFileType == ProjectFileType.KNOWN_FILE) {
-                location = additionalDirStructure != null ? additionalDirStructure : "" + projectName + KNOWN + multipartFile.getOriginalFilename();
+                location = (additionalDirStructure != null ? additionalDirStructure : "") + projectName + KNOWN + multipartFile.getOriginalFilename();
+                log.info("generating known file location {}", location);
             }
             amazonS3Client.putObject(new PutObjectRequest(bucketName, location, file));
             log.info("upload success file name {}", multipartFile.getOriginalFilename());

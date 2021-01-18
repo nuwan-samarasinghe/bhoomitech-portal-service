@@ -37,7 +37,7 @@ public class ProjectService {
     }
 
     public List<Project> getProject() {
-        return projectRepository.findAll();
+        return projectRepository.findAllByOrderByCreatedTimestampDesc();
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -46,7 +46,7 @@ public class ProjectService {
     }
 
     public List<Project> getProjectByUserHref(String userHref) {
-        return projectRepository.findAllByUserHref(userHref);
+        return projectRepository.findAllByUserHrefOrderByCreatedTimestampDesc(userHref);
     }
 
     public ResponseEntity<String> checkProjectName(String projectName, String userHref) {
@@ -65,20 +65,20 @@ public class ProjectService {
             MultipartFile[] files) {
         Optional<Project> projectOptional = projectRepository.findByProjectName(projectName);
         if (projectOptional.isPresent()) {
+            log.info("project name exists hence updating the info");
             Project project = projectOptional.get();
-            if (!project
+            if (project
                     .getFileInfos()
                     .stream()
-                    .filter(projectFileInfo -> {
-                        return projectFileInfo.getBasePointId().equals(projectFileInfoDocument.getBasePointId());
-                    }).findFirst().isPresent()) {
+                    .noneMatch(projectFileInfo -> projectFileInfo.getBasePointId().equals(projectFileInfoDocument.getBasePointId()))) {
+                log.info("project is not having the same base point id");
                 FileStatus fileStatus = this.fileUploadService.fileUpload(additionalDirStructure, files, projectName, projectFileType);
                 ProjectFileInfo projectFileInfo = ProjectConverter
                         .fileStatusDocumentProjectFileInfoDocumentProjectFileInfo
                         .apply(fileStatus, projectFileInfoDocument);
                 project.getFileInfos().add(projectFileInfo);
-                projectRepository.save(project);
-
+                Project save = projectRepository.save(project);
+                log.info("updated project {}", save);
                 for (String fileName : fileStatus.getFileNames()) {
                     File deleteFile = new File(System.getProperty("user.dir") + "/" + fileName);
                     try {

@@ -14,7 +14,7 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
-    @Column(name = "project_name", unique = true)
+    @Column(name = "project_name")
     private String projectName;
     @Column(name = "project_start_timestamp")
     private Timestamp projectStartTimestamp;

@@ -13,5 +13,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     Optional<Project> findByProjectNameAndUserHref(String projectName, String userHref);
 
-    List<Project> findAllByUserHref(String userHref);
+    List<Project> findAllByUserHrefOrderByCreatedTimestampDesc(String userHref);
+
+    List<Project> findAllByOrderByCreatedTimestampDesc();
 }
