@@ -1,3 +1,4 @@
 spring:
   application:
     name: portal
+authUrl: "http://ec2-54-175-165-177.compute-1.amazonaws.com:12002"

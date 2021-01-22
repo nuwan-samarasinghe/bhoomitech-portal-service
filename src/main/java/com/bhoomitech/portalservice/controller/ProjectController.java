@@ -2,7 +2,9 @@ package com.bhoomitech.portalservice.controller;
 
 import com.bhoomitech.portalservice.apidocs.project.ProjectDocument;
 import com.bhoomitech.portalservice.apidocs.project.ProjectFileInfoDocument;
+import com.bhoomitech.portalservice.apidocs.project.UserDetailDocument;
 import com.bhoomitech.portalservice.model.ProjectFileType;
+import com.bhoomitech.portalservice.service.AuthService;
 import com.bhoomitech.portalservice.service.ProjectService;
 import com.bhoomitech.portalservice.util.ProjectConverter;
 import lombok.extern.slf4j.Slf4j;
@@ -21,20 +23,28 @@ public class ProjectController {
     public static final String CREATE = "CREATE";
     public static final String UPDATE = "UPDATE";
     private final ProjectService projectService;
+    private final AuthService authService;
 
     public ProjectController(
-            ProjectService projectService) {
+            ProjectService projectService, AuthService authService) {
         this.projectService = projectService;
+        this.authService = authService;
     }
 
     @PreAuthorize("hasRole('ROLE_admin')")
     @PostMapping(value = "/project/all")
     public @ResponseBody
-    List<ProjectDocument> getProjects(@RequestParam("projectOnly") boolean projectOnly) {
+    List<ProjectDocument> getProjects(
+            @RequestParam("projectOnly") boolean projectOnly,
+            @RequestHeader("Authorization") String token
+    ) {
         List<ProjectDocument> projectDocuments = new ArrayList<>();
+        List<UserDetailDocument> allAuthDetails = this.authService.getAllAuthDetails(token);
         projectService.getProject()
                 .forEach(project ->
-                        projectDocuments.add(ProjectConverter.projectProjectDocumentFunction.apply(project, projectOnly)));
+                        projectDocuments.add(
+                                ProjectConverter.projectProjectDocumentFunction.apply(project, projectOnly))
+                );
         return projectDocuments;
     }
 
