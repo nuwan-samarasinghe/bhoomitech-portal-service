@@ -1,16 +1,15 @@
 package com.bhoomitech.portalservice.service;
 
 import com.bhoomitech.portalservice.model.FileStatus;
-import com.bhoomitech.portalservice.apidocs.project.ProjectDocument;
-import com.bhoomitech.portalservice.apidocs.project.ProjectFileInfoDocument;
 import com.bhoomitech.portalservice.model.Project;
 import com.bhoomitech.portalservice.model.ProjectFileInfo;
-import com.bhoomitech.portalservice.model.ProjectFileType;
 import com.bhoomitech.portalservice.repository.ProjectRepository;
 import com.bhoomitech.portalservice.util.ProjectConverter;
+import com.xcodel.commons.project.ProjectDocument;
+import com.xcodel.commons.project.ProjectFileInfoDocument;
+import com.xcodel.commons.project.ProjectFileType;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

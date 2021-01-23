@@ -1,7 +1,7 @@
 package com.bhoomitech.portalservice.common;
 
 import com.amazonaws.services.iot.model.ResourceNotFoundException;
-import com.bhoomitech.portalservice.apidocs.project.ErrorMessage;
+import com.xcodel.commons.common.ErrorMessage;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.naming.SizeLimitExceededException;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;

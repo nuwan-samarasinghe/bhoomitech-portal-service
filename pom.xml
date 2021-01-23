@@ -21,9 +21,24 @@
         <validation-api.version>2.0.1.Final</validation-api.version>
         <aws-java-sdk.version>1.11.163</aws-java-sdk.version>
         <commons-io.version>2.6</commons-io.version>
+        <lib-common.version>2021.01-1</lib-common.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>xcodel-repo</id>
+            <name>Excodel maven repository</name>
+            <url>https://bitbucket.org/xcodel/xcodel-repo/src/master/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+
     <dependencies>
+        <dependency>
+            <groupId>com.xcodel</groupId>
+            <artifactId>lib-common</artifactId>
+            <version>${lib-common.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>

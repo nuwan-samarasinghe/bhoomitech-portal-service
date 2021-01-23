@@ -4,7 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.bhoomitech.portalservice.model.FileStatus;
 import com.bhoomitech.portalservice.common.PortalServiceException;
-import com.bhoomitech.portalservice.model.ProjectFileType;
+import com.xcodel.commons.project.ProjectFileType;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;

@@ -1,11 +1,11 @@
 package com.bhoomitech.portalservice.util;
 
-import com.bhoomitech.portalservice.apidocs.project.UserDetailDocument;
 import com.bhoomitech.portalservice.model.FileStatus;
-import com.bhoomitech.portalservice.apidocs.project.ProjectDocument;
-import com.bhoomitech.portalservice.apidocs.project.ProjectFileInfoDocument;
 import com.bhoomitech.portalservice.model.Project;
 import com.bhoomitech.portalservice.model.ProjectFileInfo;
+import com.xcodel.commons.auth.userdetail.UserDetailDocument;
+import com.xcodel.commons.project.ProjectDocument;
+import com.xcodel.commons.project.ProjectFileInfoDocument;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;

@@ -1,13 +1,13 @@
 package com.bhoomitech.portalservice.controller;
 
-import com.bhoomitech.portalservice.apidocs.project.ProjectDocument;
-import com.bhoomitech.portalservice.apidocs.project.ProjectFileInfoDocument;
-import com.bhoomitech.portalservice.apidocs.project.UserDetailDocument;
-import com.bhoomitech.portalservice.model.ProjectFileType;
 import com.bhoomitech.portalservice.service.AuthService;
 import com.bhoomitech.portalservice.service.ProjectService;
 import com.bhoomitech.portalservice.util.ProjectConverter;
 import com.bhoomitech.portalservice.util.SecretUtil;
+import com.xcodel.commons.auth.userdetail.UserDetailDocument;
+import com.xcodel.commons.project.ProjectDocument;
+import com.xcodel.commons.project.ProjectFileInfoDocument;
+import com.xcodel.commons.project.ProjectFileType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
