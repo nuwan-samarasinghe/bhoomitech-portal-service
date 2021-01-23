@@ -50,7 +50,7 @@ public class ProjectService {
 
     public ResponseEntity<String> checkProjectName(String projectName, String userHref) {
         if (projectRepository.findByProjectNameAndUserHref(projectName, userHref).isPresent()) {
-            return ResponseEntity.badRequest().body("not available");
+            return ResponseEntity.ok("not available");
         }
         return ResponseEntity.ok("available");
     }
