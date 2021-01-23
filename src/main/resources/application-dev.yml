@@ -1,0 +1,27 @@
+property-level: 'portal dev level'
+spring:
+  datasource:
+    url: jdbc:mysql://bhoomitech-dev.cyojzfaxldo6.us-east-1.rds.amazonaws.com:3306/boomitech?createDatabaseIfNotExist=true
+    username: bhoomitech_rw
+    password: Bh00miTecH
+security:
+  oauth2:
+    resource:
+      token-info-uri: http://ec2-54-175-165-177.compute-1.amazonaws.com:12002/oauth/check_token
+    client:
+      client-id: web
+      client-secret: pin
+      access-token-uri: http://ec2-54-175-165-177.compute-1.amazonaws.com:12002/oauth/token
+cloud:
+  aws:
+    credentials:
+      access-key: "AKIAVE6BDCS3EWENNBTT"
+      secret-key: "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"
+    region:
+      static: "us-east-1"
+app:
+  custom-configs:
+    file-base-location: "https://bhoomi-tech-s3-bucket.s3.amazonaws.com/"
+    max-file-upload-limit: 5
+    min-file-upload-limit: 1
+    bucket-name: "bhoomi-tech-s3-bucket"
