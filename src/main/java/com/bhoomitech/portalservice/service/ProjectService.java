@@ -1,10 +1,13 @@
 package com.bhoomitech.portalservice.service;
 
+import com.bhoomitech.portalservice.common.StatusCodes;
 import com.bhoomitech.portalservice.model.FileStatus;
 import com.bhoomitech.portalservice.model.Project;
 import com.bhoomitech.portalservice.model.ProjectFileInfo;
 import com.bhoomitech.portalservice.repository.ProjectRepository;
 import com.bhoomitech.portalservice.util.ProjectConverter;
+import com.xcodel.commons.common.ResponseObject;
+import com.xcodel.commons.common.ResponseStatus;
 import com.xcodel.commons.project.ProjectDocument;
 import com.xcodel.commons.project.ProjectFileInfoDocument;
 import com.xcodel.commons.project.ProjectFileType;
@@ -19,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -48,11 +52,18 @@ public class ProjectService {
         return projectRepository.findAllByUserHrefOrderByCreatedTimestampDesc(userHref);
     }
 
-    public ResponseEntity<String> checkProjectName(String projectName, String userHref) {
+    public ResponseObject checkProjectName(String projectName, String userHref) {
+        ResponseObject responseObject = new ResponseObject();
+        ResponseStatus responseStatus = new ResponseStatus();
         if (projectRepository.findByProjectNameAndUserHref(projectName, userHref).isPresent()) {
-            return ResponseEntity.ok("not available");
+            responseObject.setResponseData("not available");
+            responseStatus.setResultCode(StatusCodes.PROJECT_NAME_NOT_AVAILABLE.getStatusCode());
+            responseStatus.setResultDescription(StatusCodes.PROJECT_NAME_NOT_AVAILABLE.getMessage());
         }
-        return ResponseEntity.ok("available");
+        responseStatus.setResultCode(StatusCodes.PROJECT_NAME_AVAILABLE.getStatusCode());
+        responseStatus.setResultDescription(StatusCodes.PROJECT_NAME_AVAILABLE.getMessage());
+        responseObject.setResponseData("available");
+        return responseObject;
     }
 
     @Transactional(rollbackFor = Exception.class)

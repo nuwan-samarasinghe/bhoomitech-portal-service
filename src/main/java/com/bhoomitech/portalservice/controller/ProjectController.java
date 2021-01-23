@@ -5,6 +5,7 @@ import com.bhoomitech.portalservice.service.ProjectService;
 import com.bhoomitech.portalservice.util.ProjectConverter;
 import com.bhoomitech.portalservice.util.SecretUtil;
 import com.xcodel.commons.auth.userdetail.UserDetailDocument;
+import com.xcodel.commons.common.ResponseObject;
 import com.xcodel.commons.project.ProjectDocument;
 import com.xcodel.commons.project.ProjectFileInfoDocument;
 import com.xcodel.commons.project.ProjectFileType;
@@ -62,7 +63,7 @@ public class ProjectController {
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
     @PostMapping(value = "/project/validity")
-    public ResponseEntity<String> checkProjectNameIsAvailable(
+    public ResponseObject checkProjectNameIsAvailable(
             @RequestParam("projectName") String projectName,
             @RequestParam("userHref") String userHref) {
         return projectService.checkProjectName(projectName, userHref);
