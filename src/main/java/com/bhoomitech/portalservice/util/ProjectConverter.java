@@ -1,5 +1,6 @@
 package com.bhoomitech.portalservice.util;
 
+import com.bhoomitech.portalservice.apidocs.project.UserDetailDocument;
 import com.bhoomitech.portalservice.model.FileStatus;
 import com.bhoomitech.portalservice.apidocs.project.ProjectDocument;
 import com.bhoomitech.portalservice.apidocs.project.ProjectFileInfoDocument;
@@ -10,6 +11,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -108,5 +110,14 @@ public final class ProjectConverter {
                 projectFileInfoDocument.setGpsCoordinatesLon(projectFileInfo.getGpsCoordinatesLon());
                 projectFileInfoDocument.setGpsCoordinatesZ(projectFileInfo.getGpsCoordinatesZ());
                 return projectFileInfoDocument;
+            };
+
+    public static BiFunction<ProjectDocument, Map<String, UserDetailDocument>, ProjectDocument> projectDocumentMapProjectDocumentBiFunction =
+            (projectDocument, stringUserDetailDocumentMap) -> {
+                UserDetailDocument userDetailDocument = stringUserDetailDocumentMap.get(projectDocument.getUserHref());
+                projectDocument.setUserName(userDetailDocument.getUsername());
+                projectDocument.setName(userDetailDocument.getName());
+                projectDocument.setOrganization(userDetailDocument.getOrganization());
+                return projectDocument;
             };
 }

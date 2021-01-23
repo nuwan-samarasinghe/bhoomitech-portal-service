@@ -7,14 +7,16 @@ import com.bhoomitech.portalservice.model.ProjectFileType;
 import com.bhoomitech.portalservice.service.AuthService;
 import com.bhoomitech.portalservice.service.ProjectService;
 import com.bhoomitech.portalservice.util.ProjectConverter;
+import com.bhoomitech.portalservice.util.SecretUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -22,6 +24,7 @@ public class ProjectController {
 
     public static final String CREATE = "CREATE";
     public static final String UPDATE = "UPDATE";
+    public static final String AUTH_USER = "/auth/user/";
     private final ProjectService projectService;
     private final AuthService authService;
 
@@ -39,13 +42,24 @@ public class ProjectController {
             @RequestHeader("Authorization") String token
     ) {
         List<ProjectDocument> projectDocuments = new ArrayList<>();
-        List<UserDetailDocument> allAuthDetails = this.authService.getAllAuthDetails(token);
+        Map<String, UserDetailDocument> userDetailMap = new HashMap<>();
+        for (Object map : this.authService.getAllAuthDetails(token)) {
+            UserDetailDocument userDetailDocument = new UserDetailDocument();
+            userDetailDocument.setName(((LinkedHashMap) map).get("name").toString());
+            userDetailDocument.setOrganization(((LinkedHashMap) map).get("organization").toString());
+            userDetailDocument.setUsername(((LinkedHashMap) map).get("username").toString());
+            userDetailMap.put(AUTH_USER + SecretUtil.decode(((LinkedHashMap) map).get("id").toString()), userDetailDocument);
+        }
         projectService.getProject()
                 .forEach(project ->
                         projectDocuments.add(
                                 ProjectConverter.projectProjectDocumentFunction.apply(project, projectOnly))
                 );
-        return projectDocuments;
+        List<ProjectDocument> userDetails = new ArrayList<>();
+        projectDocuments
+                .forEach(projectDocument ->
+                        userDetails.add(ProjectConverter.projectDocumentMapProjectDocumentBiFunction.apply(projectDocument, userDetailMap)));
+        return userDetails;
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")

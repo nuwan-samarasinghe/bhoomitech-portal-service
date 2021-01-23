@@ -17,5 +17,6 @@ public class ProjectDocument {
     private List<ProjectFileInfoDocument> projectFileInfoDocuments = new ArrayList<>();
     private String createdTimestamp;
     private String userName;
+    private String name;
     private String organization;
 }

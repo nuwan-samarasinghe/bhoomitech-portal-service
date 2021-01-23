@@ -21,7 +21,7 @@ public class AuthService {
     @Value("${authUrl}")
     private String authUrl;
 
-    public List<UserDetailDocument> getAllAuthDetails(String token) {
+    public List getAllAuthDetails(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", token);
         HttpEntity entity = new HttpEntity<>(headers);
