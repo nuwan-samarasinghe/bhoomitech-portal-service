@@ -59,10 +59,11 @@ public class ProjectService {
             responseObject.setResponseData("not available");
             responseStatus.setResultCode(StatusCodes.PROJECT_NAME_NOT_AVAILABLE.getStatusCode());
             responseStatus.setResultDescription(StatusCodes.PROJECT_NAME_NOT_AVAILABLE.getMessage());
+        } else {
+            responseStatus.setResultCode(StatusCodes.PROJECT_NAME_AVAILABLE.getStatusCode());
+            responseStatus.setResultDescription(StatusCodes.PROJECT_NAME_AVAILABLE.getMessage());
+            responseObject.setResponseData("available");
         }
-        responseStatus.setResultCode(StatusCodes.PROJECT_NAME_AVAILABLE.getStatusCode());
-        responseStatus.setResultDescription(StatusCodes.PROJECT_NAME_AVAILABLE.getMessage());
-        responseObject.setResponseData("available");
         return responseObject;
     }
 
