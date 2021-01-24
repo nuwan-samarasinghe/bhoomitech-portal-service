@@ -8,11 +8,16 @@ import com.bhoomitech.portalservice.repository.ProjectRepository;
 import com.bhoomitech.portalservice.util.ProjectConverter;
 import com.xcodel.commons.common.ResponseObject;
 import com.xcodel.commons.common.ResponseStatus;
+import com.xcodel.commons.mail.MailService;
+import com.xcodel.commons.mail.model.Email;
+import com.xcodel.commons.mail.model.MailConfiguration;
 import com.xcodel.commons.project.ProjectDocument;
 import com.xcodel.commons.project.ProjectFileInfoDocument;
 import com.xcodel.commons.project.ProjectFileType;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,9 +38,29 @@ public class ProjectService {
 
     private final FileUploadService fileUploadService;
 
-    public ProjectService(ProjectRepository projectRepository, FileUploadService fileUploadService) {
+    private final AuthService authService;
+
+    @Value("${app.custom-configs.email.name}")
+    private String name;
+
+    @Value("${app.custom-configs.email.address}")
+    private String emailAddress;
+
+    @Value("${app.custom-configs.email.password}")
+    private String emailPassword;
+
+    @Value("${app.custom-configs.email.smtp-host}")
+    private String smtpHost;
+
+    @Value("${app.custom-configs.email.smtp-port}")
+    private Integer smtpPort;
+
+    public ProjectService(ProjectRepository projectRepository,
+                          FileUploadService fileUploadService,
+                          AuthService authService) {
         this.projectRepository = projectRepository;
         this.fileUploadService = fileUploadService;
+        this.authService = authService;
     }
 
     public List<Project> getProject() {
@@ -122,8 +147,34 @@ public class ProjectService {
                 project.setStatus("ERROR");
             }
             projectRepository.save(project);
+
+            String userId = StringUtils.substringAfterLast(project.getUserHref(), "/");
+            this.a
             updated.set(true);
         });
         return updated.get();
+    }
+
+    private Boolean sendMail(@NonNull String userName, @NonNull String toEmail, @NonNull String body, String subject) {
+        MailConfiguration mailConfiguration = new MailConfiguration();
+        mailConfiguration.setSmtpHost(smtpHost);
+        mailConfiguration.setSmtpPort(smtpPort);
+        mailConfiguration.setSmtpUserName(emailAddress);
+        mailConfiguration.setSmtpPassword(emailPassword);
+
+        Email email = new Email();
+        email.setToName(userName);
+        email.setToEmail(toEmail);
+        email.setFromName(name);
+        email.setFromEmail(emailAddress);
+        email.setSubject(subject);
+        email.setBody(body);
+
+        boolean success = MailService.getMailService(mailConfiguration).sendMail(email);
+        if (success)
+            log.info("email sent success to {}", toEmail);
+        else
+            log.error("email sent failed to {}", toEmail);
+        return success;
     }
 }
