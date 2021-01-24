@@ -50,6 +50,12 @@ public class ProjectService {
     @Value("${app.custom-configs.email.password}")
     private String emailPassword;
 
+    @Value("${app.custom-configs.email.cc.address}")
+    private String ccEmail;
+
+    @Value("${app.custom-configs.email.cc.name}")
+    private String ccName;
+
     @Value("${app.custom-configs.email.smtp-host}")
     private String smtpHost;
 
@@ -151,28 +157,46 @@ public class ProjectService {
                 String username = ((LinkedHashMap) user).get("username").toString();
                 String email = ((LinkedHashMap) user).get("email").toString();
                 String mailBody = "<html>\n" +
-                        "<p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span\n" +
-                        "><span\n" +
-                        "        style=\"font-size: 11pt; font-family: Calibri, sans-serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; vertical-align: baseline; white-space: pre-wrap;\">DATA UPLOADED TO THE SYSTEM SUCCESSFULLY!</span></span>\n" +
-                        "</p>\n" +
+                        "<p><span\n" +
+                        "        data-sheets-userformat=\"{&quot;2&quot;:573,&quot;3&quot;:{&quot;1&quot;:0},&quot;5&quot;:{&quot;1&quot;:[{&quot;1&quot;:2,&quot;2&quot;:0,&quot;5&quot;:{&quot;1&quot;:2,&quot;2&quot;:0}},{&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:3},{&quot;1&quot;:1,&quot;2&quot;:0,&quot;4&quot;:1}]},&quot;6&quot;:{&quot;1&quot;:[{&quot;1&quot;:2,&quot;2&quot;:0,&quot;5&quot;:{&quot;1&quot;:2,&quot;2&quot;:0}},{&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:3},{&quot;1&quot;:1,&quot;2&quot;:0,&quot;4&quot;:1}]},&quot;7&quot;:{&quot;1&quot;:[{&quot;1&quot;:2,&quot;2&quot;:0,&quot;5&quot;:{&quot;1&quot;:2,&quot;2&quot;:0}},{&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:3},{&quot;1&quot;:1,&quot;2&quot;:0,&quot;4&quot;:1}]},&quot;8&quot;:{&quot;1&quot;:[{&quot;1&quot;:2,&quot;2&quot;:0,&quot;5&quot;:{&quot;1&quot;:2,&quot;2&quot;:0}},{&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:3},{&quot;1&quot;:1,&quot;2&quot;:0,&quot;4&quot;:1}]},&quot;12&quot;:0}\"\n" +
+                        "        data-sheets-value=\"{&quot;1&quot;:2,&quot;2&quot;:&quot;Project sucess email content \\n\\nSubject : 'Bhoomitech GNSS portal project creation'\\n\\nHi User, \\n\\nYour new project is now created \\nProject details \\nName\\nCreated Date\\nPrice\\nOther details\\n\\nPlease make your payments to;\\nAccount Number        - 0140-0077152-4002\\nAccounts Name                - BhoomiTech (PVT) Ltd\\nBank Name                - Seylan Bank\\nBranch                        - Dehiwala\\n\\nPlease forward a copy of the payment deposit slip/e-receipt copy to one of the following\\nWhatsApp - 074 017 7178\\nE-mail – gnsspp@bhoomitech.com\\nFax – 011 2713088\\nFor further information contact us on +94 74 017 7178 (Dinith)\\n&quot;}\"\n" +
+                        "        style=\"color: rgb(0, 0, 0); font-size: 10pt; font-family: Arial;\">Hi <strong>{user_name}</strong>,<br/>\n" +
+                        "<br/>\n" +
+                        "Your new project is now created</span></p>\n" +
                         "\n" +
-                        "<p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span\n" +
-                        "><span\n" +
-                        "        style=\"font-size: 11pt; font-family: Calibri, sans-serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; vertical-align: baseline; white-space: pre-wrap;\">Thank you for using the Bhoomi-Tech GNSS data post-processing portal</span></span>\n" +
-                        "</p>\n" +
+                        "<p><br/>\n" +
+                        "    <span data-sheets-userformat=\"{&quot;2&quot;:573,&quot;3&quot;:{&quot;1&quot;:0},&quot;5&quot;:{&quot;1&quot;:[{&quot;1&quot;:2,&quot;2&quot;:0,&quot;5&quot;:{&quot;1&quot;:2,&quot;2&quot;:0}},{&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:3},{&quot;1&quot;:1,&quot;2&quot;:0,&quot;4&quot;:1}]},&quot;6&quot;:{&quot;1&quot;:[{&quot;1&quot;:2,&quot;2&quot;:0,&quot;5&quot;:{&quot;1&quot;:2,&quot;2&quot;:0}},{&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:3},{&quot;1&quot;:1,&quot;2&quot;:0,&quot;4&quot;:1}]},&quot;7&quot;:{&quot;1&quot;:[{&quot;1&quot;:2,&quot;2&quot;:0,&quot;5&quot;:{&quot;1&quot;:2,&quot;2&quot;:0}},{&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:3},{&quot;1&quot;:1,&quot;2&quot;:0,&quot;4&quot;:1}]},&quot;8&quot;:{&quot;1&quot;:[{&quot;1&quot;:2,&quot;2&quot;:0,&quot;5&quot;:{&quot;1&quot;:2,&quot;2&quot;:0}},{&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:3},{&quot;1&quot;:1,&quot;2&quot;:0,&quot;4&quot;:1}]},&quot;12&quot;:0}\"\n" +
+                        "          data-sheets-value=\"{&quot;1&quot;:2,&quot;2&quot;:&quot;Project sucess email content \\n\\nSubject : 'Bhoomitech GNSS portal project creation'\\n\\nHi User, \\n\\nYour new project is now created \\nProject details \\nName\\nCreated Date\\nPrice\\nOther details\\n\\nPlease make your payments to;\\nAccount Number        - 0140-0077152-4002\\nAccounts Name                - BhoomiTech (PVT) Ltd\\nBank Name                - Seylan Bank\\nBranch                        - Dehiwala\\n\\nPlease forward a copy of the payment deposit slip/e-receipt copy to one of the following\\nWhatsApp - 074 017 7178\\nE-mail – gnsspp@bhoomitech.com\\nFax – 011 2713088\\nFor further information contact us on +94 74 017 7178 (Dinith)\\n&quot;}\"\n" +
+                        "          style=\"color: rgb(0, 0, 0); font-size: 10pt; font-family: Arial;\">Project details</span></p>\n" +
                         "\n" +
-                        "<p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span\n" +
-                        "><span\n" +
-                        "        style=\"font-size: 11pt; font-family: Calibri, sans-serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; vertical-align: baseline; white-space: pre-wrap;\">Please be kind enough to send your payment confirmation through WhatsApp, email, or fax</span></span>\n" +
-                        "</p>\n" +
+                        "<p><br/>\n" +
+                        "    <span data-sheets-userformat=\"{&quot;2&quot;:573,&quot;3&quot;:{&quot;1&quot;:0},&quot;5&quot;:{&quot;1&quot;:[{&quot;1&quot;:2,&quot;2&quot;:0,&quot;5&quot;:{&quot;1&quot;:2,&quot;2&quot;:0}},{&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:3},{&quot;1&quot;:1,&quot;2&quot;:0,&quot;4&quot;:1}]},&quot;6&quot;:{&quot;1&quot;:[{&quot;1&quot;:2,&quot;2&quot;:0,&quot;5&quot;:{&quot;1&quot;:2,&quot;2&quot;:0}},{&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:3},{&quot;1&quot;:1,&quot;2&quot;:0,&quot;4&quot;:1}]},&quot;7&quot;:{&quot;1&quot;:[{&quot;1&quot;:2,&quot;2&quot;:0,&quot;5&quot;:{&quot;1&quot;:2,&quot;2&quot;:0}},{&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:3},{&quot;1&quot;:1,&quot;2&quot;:0,&quot;4&quot;:1}]},&quot;8&quot;:{&quot;1&quot;:[{&quot;1&quot;:2,&quot;2&quot;:0,&quot;5&quot;:{&quot;1&quot;:2,&quot;2&quot;:0}},{&quot;1&quot;:0,&quot;2&quot;:0,&quot;3&quot;:3},{&quot;1&quot;:1,&quot;2&quot;:0,&quot;4&quot;:1}]},&quot;12&quot;:0}\"\n" +
+                        "          data-sheets-value=\"{&quot;1&quot;:2,&quot;2&quot;:&quot;Project sucess email content \\n\\nSubject : 'Bhoomitech GNSS portal project creation'\\n\\nHi User, \\n\\nYour new project is now created \\nProject details \\nName\\nCreated Date\\nPrice\\nOther details\\n\\nPlease make your payments to;\\nAccount Number        - 0140-0077152-4002\\nAccounts Name                - BhoomiTech (PVT) Ltd\\nBank Name                - Seylan Bank\\nBranch                        - Dehiwala\\n\\nPlease forward a copy of the payment deposit slip/e-receipt copy to one of the following\\nWhatsApp - 074 017 7178\\nE-mail – gnsspp@bhoomitech.com\\nFax – 011 2713088\\nFor further information contact us on +94 74 017 7178 (Dinith)\\n&quot;}\"\n" +
+                        "          style=\"color: rgb(0, 0, 0); font-size: 10pt; font-family: Arial;\">Name: <strong>{project_name}</strong><br/>\n" +
+                        "Created Date: {<strong>creation_date}</strong><br/>\n" +
+                        "Price: {<strong>price}</strong><br/>\n" +
+                        "<br/>\n" +
+                        "Please make your payments to;<br/>\n" +
+                        "Account Number - 0140-0077152-4002<br/>\n" +
+                        "Accounts Name - BhoomiTech (PVT) Ltd<br/>\n" +
+                        "Bank Name - Seylan Bank<br/>\n" +
+                        "Branch - Dehiwala<br/>\n" +
+                        "<br/>\n" +
+                        "Please forward a copy of the payment deposit slip/e-receipt copy to one of the following<br/>\n" +
+                        "WhatsApp - 074 017 7178<br/>\n" +
+                        "E-mail &ndash; gnsspp@bhoomitech.com<br/>\n" +
+                        "Fax &ndash; 011 2713088<br/>\n" +
+                        "For further information contact us on +94 74 017 7178 (Dinith)</span><br/>\n" +
+                        "    &nbsp;</p>\n" +
                         "\n" +
-                        "<p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span\n" +
-                        "><span\n" +
-                        "        style=\"font-size: 11pt; font-family: Calibri, sans-serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; vertical-align: baseline; white-space: pre-wrap;\">Your report will be ready within 48 hours</span></span>\n" +
-                        "</p>\n" +
                         "</html>";
 
-                sendMail(username, email, mailBody, "DATA UPLOADED TO BHOOMITECH GNSS");
+                String replacedBody = mailBody.replace("{user_name}", username)
+                        .replace("{project_name}", project.getProjectName())
+                        .replace("{creation_date}", project.getCreatedTimestamp().toString())
+                        .replace("{price}", project.getPrice());
+
+                sendMail(username, email, replacedBody, "Bhoomitech GNSS portal project creation");
                 updated.set(true);
             } else if ("ERROR".equalsIgnoreCase(success)) {
                 project.setStatus("ERROR");
@@ -194,12 +218,16 @@ public class ProjectService {
         Email email = new Email();
         email.setToName(userName);
         email.setToEmail(toEmail);
+
+        email.setCcName(ccName);
+        email.setCcEmail(ccEmail);
+
         email.setFromName(name);
         email.setFromEmail(emailAddress);
         email.setSubject(subject);
         email.setBody(body);
 
-        boolean success = MailService.getMailService(mailConfiguration).sendMail(email);
+        boolean success = MailService.getMailService(mailConfiguration).sendMailWithCC(email);
         if (success)
             log.info("email sent success to {}", toEmail);
         else

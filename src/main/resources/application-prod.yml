@@ -36,3 +36,6 @@ app:
       password: bUH!4Laur*DhFxVrEl
       smtp-host: mail.bhoomitech.com
       smtp-port: 587
+      cc:
+        address: skanushka@gmail.com
+        name: Bhoomitech GNSS
