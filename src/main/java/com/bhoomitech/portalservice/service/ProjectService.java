@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Service
@@ -111,14 +112,18 @@ public class ProjectService {
                 projectRepository.findByProjectName(projectName).get() : new Project();
     }
 
-    public void completeProject(@NonNull String projectId, @NonNull String succeess){
+    public boolean completeProject(@NonNull String projectId, @NonNull String success) {
+        AtomicBoolean updated = new AtomicBoolean(false);
         Optional<Project> optionalProject = projectRepository.findById(Long.parseLong(projectId));
         optionalProject.ifPresent(project -> {
-            if("TRUE".equalsIgnoreCase(succeess)){
-
-            }else{
-
+            if ("SUCCESS".equalsIgnoreCase(success)) {
+                project.setStatus("SUBMITTED");
+            } else if ("ERROR".equalsIgnoreCase(success)) {
+                project.setStatus("ERROR");
             }
+            projectRepository.save(project);
+            updated.set(true);
         });
+        return updated.get();
     }
 }

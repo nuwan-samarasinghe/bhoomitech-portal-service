@@ -10,6 +10,7 @@ import com.xcodel.commons.project.ProjectDocument;
 import com.xcodel.commons.project.ProjectFileInfoDocument;
 import com.xcodel.commons.project.ProjectFileType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -125,14 +126,17 @@ public class ProjectController {
 
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
-    @PostMapping(value = "/project-info")
-    public ProjectFileInfoDocument completeProject(
+    @PostMapping(value = "/project/complete")
+    public ResponseEntity completeProject(
             @RequestParam("projectId") String projectId,
             @RequestParam("success") String success
     ) {
         log.info("project id is {}", projectId);
         log.info("project success? {}", success);
-        this.projectService.createProjectFileInfo(additionalDirStructure, projectId, projectFileInfoDocument, projectFileType, files);
-        return projectFileInfoDocument;
+        boolean updated = this.projectService.completeProject(projectId, success);
+        if (!updated) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
     }
 }
