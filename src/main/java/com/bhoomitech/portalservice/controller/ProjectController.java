@@ -129,11 +129,12 @@ public class ProjectController {
     @PostMapping(value = "/project/complete")
     public ResponseEntity completeProject(
             @RequestParam("projectId") String projectId,
-            @RequestParam("success") String success
+            @RequestParam("success") String success,
+            @RequestHeader("Authorization") String token
     ) {
         log.info("project id is {}", projectId);
         log.info("project success? {}", success);
-        boolean updated = this.projectService.completeProject(projectId, success);
+        boolean updated = this.projectService.completeProject(projectId, success, token);
         if (!updated) {
             return ResponseEntity.badRequest().build();
         }

@@ -30,3 +30,9 @@ app:
     max-file-upload-limit: 5
     min-file-upload-limit: 1
     bucket-name: "bhoomi-tech-s3-bucket"
+    email:
+      name: BHOOMITECH GNS SYSTEM
+      address: noreply@bhoomitech.com
+      password: bUH!4Laur*DhFxVrEl
+      smtp-host: mail.bhoomitech.com
+      smtp-port: 587

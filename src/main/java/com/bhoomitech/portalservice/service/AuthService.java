@@ -26,4 +26,11 @@ public class AuthService {
         HttpEntity entity = new HttpEntity<>(headers);
         return restTemplate.exchange(authUrl + "/auth//user/all", HttpMethod.GET, entity, List.class).getBody();
     }
+
+    public Object getUserById(String token, String userId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", token);
+        HttpEntity entity = new HttpEntity<>(headers);
+        return restTemplate.exchange(authUrl + "/auth//user/"+ userId, HttpMethod.GET, entity, Object.class).getBody();
+    }
 }

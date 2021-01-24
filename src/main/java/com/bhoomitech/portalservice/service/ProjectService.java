@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -137,20 +138,48 @@ public class ProjectService {
                 projectRepository.findByProjectName(projectName).get() : new Project();
     }
 
-    public boolean completeProject(@NonNull String projectId, @NonNull String success) {
+    public boolean completeProject(@NonNull String projectId, @NonNull String success, String token) {
         AtomicBoolean updated = new AtomicBoolean(false);
         Optional<Project> optionalProject = projectRepository.findById(Long.parseLong(projectId));
         optionalProject.ifPresent(project -> {
             if ("SUCCESS".equalsIgnoreCase(success)) {
                 project.setStatus("SUBMITTED");
+                projectRepository.save(project);
+                // sending mail
+                String userId = StringUtils.substringAfterLast(project.getUserHref(), "/");
+                Object user = this.authService.getUserById(token, userId);
+                String username = ((LinkedHashMap) user).get("username").toString();
+                String email = ((LinkedHashMap) user).get("email").toString();
+                String mailBody = "<html>\n" +
+                        "<p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span\n" +
+                        "><span\n" +
+                        "        style=\"font-size: 11pt; font-family: Calibri, sans-serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; vertical-align: baseline; white-space: pre-wrap;\">DATA UPLOADED TO THE SYSTEM SUCCESSFULLY!</span></span>\n" +
+                        "</p>\n" +
+                        "\n" +
+                        "<p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span\n" +
+                        "><span\n" +
+                        "        style=\"font-size: 11pt; font-family: Calibri, sans-serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; vertical-align: baseline; white-space: pre-wrap;\">Thank you for using the Bhoomi-Tech GNSS data post-processing portal</span></span>\n" +
+                        "</p>\n" +
+                        "\n" +
+                        "<p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span\n" +
+                        "><span\n" +
+                        "        style=\"font-size: 11pt; font-family: Calibri, sans-serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; vertical-align: baseline; white-space: pre-wrap;\">Please be kind enough to send your payment confirmation through WhatsApp, email, or fax</span></span>\n" +
+                        "</p>\n" +
+                        "\n" +
+                        "<p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span\n" +
+                        "><span\n" +
+                        "        style=\"font-size: 11pt; font-family: Calibri, sans-serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; vertical-align: baseline; white-space: pre-wrap;\">Your report will be ready within 48 hours</span></span>\n" +
+                        "</p>\n" +
+                        "</html>";
+
+                sendMail(username, email, mailBody, "DATA UPLOADED TO BHOOMITECH GNSS");
+                updated.set(true);
             } else if ("ERROR".equalsIgnoreCase(success)) {
                 project.setStatus("ERROR");
+                projectRepository.save(project);
+                updated.set(true);
             }
-            projectRepository.save(project);
 
-            String userId = StringUtils.substringAfterLast(project.getUserHref(), "/");
-            this.a
-            updated.set(true);
         });
         return updated.get();
     }
