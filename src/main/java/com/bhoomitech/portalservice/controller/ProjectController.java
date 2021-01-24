@@ -10,7 +10,6 @@ import com.xcodel.commons.project.ProjectDocument;
 import com.xcodel.commons.project.ProjectFileInfoDocument;
 import com.xcodel.commons.project.ProjectFileType;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -111,16 +110,29 @@ public class ProjectController {
     @PostMapping(value = "/project-info")
     public ProjectFileInfoDocument createProjectFileInfoDocument(
             @RequestParam("additionalDirStructure") String additionalDirStructure,
-            @RequestParam("projectName") String projectName,
+            @RequestParam("projectId") String projectId,
             @RequestParam("projectFileType") ProjectFileType projectFileType,
             @RequestParam("files") MultipartFile[] files,
             ProjectFileInfoDocument projectFileInfoDocument
     ) {
         log.info("project additional dir structure is {}", additionalDirStructure);
-        log.info("project name is {}", projectName);
+        log.info("project id is {}", projectId);
         log.info("project type is {}", projectFileType);
         log.info("project files are {}", files.length);
-        this.projectService.createProjectFileInfo(additionalDirStructure, projectName, projectFileInfoDocument, projectFileType, files);
+        this.projectService.createProjectFileInfo(additionalDirStructure, projectId, projectFileInfoDocument, projectFileType, files);
+        return projectFileInfoDocument;
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
+    @PostMapping(value = "/project-info")
+    public ProjectFileInfoDocument completeProject(
+            @RequestParam("projectId") String projectId,
+            @RequestParam("success") String success
+    ) {
+        log.info("project id is {}", projectId);
+        log.info("project success? {}", success);
+        this.projectService.createProjectFileInfo(additionalDirStructure, projectId, projectFileInfoDocument, projectFileType, files);
         return projectFileInfoDocument;
     }
 }

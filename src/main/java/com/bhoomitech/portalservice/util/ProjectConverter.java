@@ -8,10 +8,7 @@ import com.xcodel.commons.project.ProjectDocument;
 import com.xcodel.commons.project.ProjectFileInfoDocument;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -26,6 +23,7 @@ public final class ProjectConverter {
         projectDocument.setUserHref(project.getUserHref());
         projectDocument.setAgreementStatus(project.getAgreementStatus());
         projectDocument.setPrice(project.getPrice());
+        projectDocument.setStatus(project.getStatus());
         projectDocument.setCreatedTimestamp(project.getCreatedTimestamp().toString());
         if (!isProjectOnly) {
             project.getFileInfos().forEach(projectFileInfo -> {
