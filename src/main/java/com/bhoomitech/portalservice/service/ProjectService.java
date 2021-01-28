@@ -83,19 +83,18 @@ public class ProjectService {
         return projectRepository.findAllByUserHrefOrderByCreatedTimestampDesc(userHref);
     }
 
-    public ResponseObject checkProjectName(String projectName, String userHref) {
-        ResponseObject responseObject = new ResponseObject();
+    public void checkProjectName(String projectName, String userHref, ResponseObject responseObject) {
         ResponseStatus responseStatus = new ResponseStatus();
         if (projectRepository.findByProjectNameAndUserHref(projectName, userHref).isPresent()) {
             responseObject.setResponseData("not available");
-            responseStatus.setResultCode(StatusCodes.PROJECT_NAME_NOT_AVAILABLE.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_NAME_NOT_AVAILABLE.getMessage());
+            responseStatus.setResultCode(StatusCodes.PROJECT_NAME_AVAILABLE_OK.getStatusCode());
+            responseStatus.setResultDescription(StatusCodes.PROJECT_NAME_AVAILABLE_OK.getMessage());
         } else {
-            responseStatus.setResultCode(StatusCodes.PROJECT_NAME_AVAILABLE.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_NAME_AVAILABLE.getMessage());
+            responseStatus.setResultCode(StatusCodes.PROJECT_NAME_NOT_AVAILABLE_ERROR.getStatusCode());
+            responseStatus.setResultDescription(StatusCodes.PROJECT_NAME_NOT_AVAILABLE_ERROR.getMessage());
             responseObject.setResponseData("available");
         }
-        return responseObject;
+        responseObject.setResponseStatus(responseStatus);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -129,7 +128,6 @@ public class ProjectService {
                         log.error("an error occurred while deleting a file", e);
                     }
                 }
-
                 projectFileInfoDocument.setMessage("successfully created");
             } else {
                 projectFileInfoDocument.setMessage("cannot duplicate base point id in a single project");
