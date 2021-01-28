@@ -20,7 +20,9 @@ public enum StatusCodes {
     PROJECT_CREATION_ERROR(4003, "cannot create project"),
     PROJECT_UPDATE_ERROR(4004, "cannot update project"),
     PROJECT_INFO_CREATION_ERROR(4005, "cannot create project info"),
-    PROJECT_CREATION_COMPLETED_ERROR(4006, "project creation update error");
+    PROJECT_CREATION_COMPLETED_ERROR(4006, "project creation update error"),
+
+    PROJECT_CREATION_VALIDATION_ERROR(5001, "project info creation validation error");
 
     private final Integer statusCode;
     private final String message;

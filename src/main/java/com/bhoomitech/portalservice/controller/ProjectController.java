@@ -226,6 +226,20 @@ public class ProjectController {
         log.info("project type is {}", projectFileType);
         log.info("project files are {}", files.length);
         ResponseObject responseObject = new ResponseObject();
+        if (ProjectFileType.KNOWN_FILE.getFileType().equals(projectFileType.getFileType())) {
+            if ((Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesLat()) &&
+                    Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesLon()) &&
+                    Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesZ())) ||
+                    (Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesX()) &&
+                            Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesY()) &&
+                            Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesZ()))) {
+                ResponseStatus responseStatus = new ResponseStatus();
+                responseStatus.setResultCode(StatusCodes.PROJECT_CREATION_VALIDATION_ERROR.getStatusCode());
+                responseStatus.setResultDescription(StatusCodes.PROJECT_CREATION_VALIDATION_ERROR.getMessage());
+                responseObject.setResponseStatus(responseStatus);
+                return responseObject;
+            }
+        }
         try {
             this.projectService
                     .createProjectFileInfo(
