@@ -230,6 +230,6 @@ public class ProjectService {
             log.info("email sent success to {}", toEmail);
         else
             log.error("email sent failed to {}", toEmail);
-        return true;
+        return success;
     }
 }
