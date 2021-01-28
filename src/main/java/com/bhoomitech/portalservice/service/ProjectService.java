@@ -225,11 +225,11 @@ public class ProjectService {
         email.setSubject(subject);
         email.setBody(body);
 
-        /*boolean success = MailService.getMailService(mailConfiguration).sendMailWithCC(email);
+        boolean success = MailService.getMailService(mailConfiguration).sendMailWithCC(email);
         if (success)
             log.info("email sent success to {}", toEmail);
         else
-            log.error("email sent failed to {}", toEmail);*/
+            log.error("email sent failed to {}", toEmail);
         return true;
     }
 }
