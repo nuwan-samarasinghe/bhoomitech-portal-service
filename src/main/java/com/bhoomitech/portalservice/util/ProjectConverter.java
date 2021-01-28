@@ -38,8 +38,13 @@ public final class ProjectConverter {
                 projectFileInfoDocument.setAntennaHeight(projectFileInfo.getAntennaHeight());
                 projectFileInfoDocument.setAntennaBrand(projectFileInfo.getAntennaBrand());
                 projectFileInfoDocument.setAntennaModel(projectFileInfo.getAntennaModel());
+
                 projectFileInfoDocument.setGpsCoordinatesLat(projectFileInfo.getGpsCoordinatesLat());
                 projectFileInfoDocument.setGpsCoordinatesLon(projectFileInfo.getGpsCoordinatesLon());
+
+                projectFileInfoDocument.setGpsCoordinatesX(projectFileInfo.getGpsCoordinatesX());
+                projectFileInfoDocument.setGpsCoordinatesY(projectFileInfo.getGpsCoordinatesY());
+
                 projectFileInfoDocument.setGpsCoordinatesZ(projectFileInfo.getGpsCoordinatesZ());
                 projectDocument.getProjectFileInfoDocuments().add(projectFileInfoDocument);
             });
@@ -68,8 +73,13 @@ public final class ProjectConverter {
             projectFileInfo.setAntennaHeight(projectFileInfoDocument.getAntennaHeight());
             projectFileInfo.setAntennaBrand(projectFileInfoDocument.getAntennaBrand());
             projectFileInfo.setAntennaModel(projectFileInfoDocument.getAntennaModel());
+
             projectFileInfo.setGpsCoordinatesLat(projectFileInfoDocument.getGpsCoordinatesLat());
             projectFileInfo.setGpsCoordinatesLon(projectFileInfoDocument.getGpsCoordinatesLon());
+
+            projectFileInfo.setGpsCoordinatesX(projectFileInfoDocument.getGpsCoordinatesX());
+            projectFileInfo.setGpsCoordinatesY(projectFileInfoDocument.getGpsCoordinatesY());
+
             projectFileInfo.setGpsCoordinatesZ(projectFileInfoDocument.getGpsCoordinatesZ());
             project.getFileInfos().add(projectFileInfo);
         });
@@ -86,8 +96,13 @@ public final class ProjectConverter {
                 projectFileInfo.setAntennaHeight(projectFileInfoDocument.getAntennaHeight());
                 projectFileInfo.setAntennaBrand(projectFileInfoDocument.getAntennaBrand());
                 projectFileInfo.setAntennaModel(projectFileInfoDocument.getAntennaModel());
+
                 projectFileInfo.setGpsCoordinatesLat(projectFileInfoDocument.getGpsCoordinatesLat());
                 projectFileInfo.setGpsCoordinatesLon(projectFileInfoDocument.getGpsCoordinatesLon());
+
+                projectFileInfo.setGpsCoordinatesX(projectFileInfoDocument.getGpsCoordinatesX());
+                projectFileInfo.setGpsCoordinatesY(projectFileInfoDocument.getGpsCoordinatesY());
+
                 projectFileInfo.setGpsCoordinatesZ(projectFileInfoDocument.getGpsCoordinatesZ());
                 return projectFileInfo;
             };
@@ -104,8 +119,13 @@ public final class ProjectConverter {
                 projectFileInfoDocument.setAntennaHeight(projectFileInfo.getAntennaHeight());
                 projectFileInfoDocument.setAntennaBrand(projectFileInfo.getAntennaBrand());
                 projectFileInfoDocument.setAntennaModel(projectFileInfo.getAntennaModel());
+
                 projectFileInfoDocument.setGpsCoordinatesLat(projectFileInfo.getGpsCoordinatesLat());
                 projectFileInfoDocument.setGpsCoordinatesLon(projectFileInfo.getGpsCoordinatesLon());
+
+                projectFileInfoDocument.setGpsCoordinatesX(projectFileInfo.getGpsCoordinatesX());
+                projectFileInfoDocument.setGpsCoordinatesY(projectFileInfo.getGpsCoordinatesY());
+
                 projectFileInfoDocument.setGpsCoordinatesZ(projectFileInfo.getGpsCoordinatesZ());
                 return projectFileInfoDocument;
             };
