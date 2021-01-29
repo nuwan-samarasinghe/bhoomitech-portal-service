@@ -29,8 +29,6 @@ import java.util.*;
 @RestController
 public class ProjectController {
 
-    public static final String CREATE = "CREATE";
-    public static final String UPDATE = "UPDATE";
     public static final String AUTH_USER = "/auth/user/";
     private final ProjectService projectService;
     private final AuthService authService;
@@ -57,10 +55,7 @@ public class ProjectController {
                             .apply(project, projectOnly)));
         } catch (Exception e) {
             log.error("error occurred while accessing the the project details", e);
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_DETAILS_NOT_AVAILABLE_ERROR.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_DETAILS_NOT_AVAILABLE_ERROR.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_DETAILS_NOT_AVAILABLE_ERROR);
             return responseObject;
         }
         // getting the user information
@@ -75,10 +70,7 @@ public class ProjectController {
             }
         } catch (Exception e) {
             log.error("An error occurred while accessing the the user details", e);
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.USER_DETAILS_NOT_AVAILABLE_ERROR.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.USER_DETAILS_NOT_AVAILABLE_ERROR.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.USER_DETAILS_NOT_AVAILABLE_ERROR);
             return responseObject;
         }
 
@@ -87,10 +79,7 @@ public class ProjectController {
                 .forEach(projectDocument -> userDetails.add(ProjectConverter.projectDocumentMapProjectDocumentBiFunction
                         .apply(projectDocument, userDetailMap)));
 
-        ResponseStatus responseStatus = new ResponseStatus();
-        responseStatus.setResultCode(StatusCodes.PROJECT_DETAILS_AVAILABLE_OK.getStatusCode());
-        responseStatus.setResultDescription(StatusCodes.PROJECT_DETAILS_AVAILABLE_OK.getMessage());
-        responseObject.setResponseStatus(responseStatus);
+        createResponseObject(responseObject, StatusCodes.PROJECT_DETAILS_AVAILABLE_OK);
         responseObject.setResponseData(userDetails);
         return responseObject;
     }
@@ -101,15 +90,16 @@ public class ProjectController {
             @RequestParam("projectName") String projectName,
             @RequestParam("userHref") String userHref) {
         ResponseObject responseObject = new ResponseObject();
+        if (Objects.isNull(projectName) || Objects.isNull(userHref)) {
+            createResponseObject(responseObject, StatusCodes.DATA_VALIDATION_ERROR);
+            return responseObject;
+        }
         try {
             projectService.checkProjectName(projectName, userHref, responseObject);
             return responseObject;
         } catch (Exception e) {
             log.error("An error occurred while checking the validity.", e);
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_DETAILS_NOT_AVAILABLE_ERROR.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_DETAILS_NOT_AVAILABLE_ERROR.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_DETAILS_NOT_AVAILABLE_ERROR);
             return responseObject;
         }
     }
@@ -118,20 +108,18 @@ public class ProjectController {
     @PostMapping(value = "/project/detail")
     public ResponseObject getProjectInformation(@RequestParam("projectName") String projectName) {
         ResponseObject responseObject = new ResponseObject();
+        if (Objects.isNull(projectName)) {
+            createResponseObject(responseObject, StatusCodes.DATA_VALIDATION_ERROR);
+            return responseObject;
+        }
         try {
             Project project = projectService.getProjectByProjectName(projectName);
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_DETAILS_AVAILABLE_OK.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_DETAILS_AVAILABLE_OK.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_DETAILS_AVAILABLE_OK);
             responseObject.setResponseData(ProjectConverter.projectProjectDocumentFunction.apply(project, false));
             return responseObject;
         } catch (Exception e) {
             log.error("An error occurred while getting the project details.", e);
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_DETAILS_NOT_AVAILABLE_ERROR.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_DETAILS_NOT_AVAILABLE_ERROR.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_DETAILS_NOT_AVAILABLE_ERROR);
             return responseObject;
         }
     }
@@ -142,24 +130,22 @@ public class ProjectController {
     ResponseObject getProjectsForUserHref(@RequestParam("userHref") String userHref,
                                           @RequestParam("projectOnly") boolean projectOnly) {
         ResponseObject responseObject = new ResponseObject();
+        if (Objects.isNull(userHref)) {
+            createResponseObject(responseObject, StatusCodes.DATA_VALIDATION_ERROR);
+            return responseObject;
+        }
         try {
             List<ProjectDocument> projectDocuments = new ArrayList<>();
             projectService
                     .getProjectByUserHref(userHref)
                     .forEach(project -> projectDocuments.add(ProjectConverter.projectProjectDocumentFunction
                             .apply(project, projectOnly)));
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_DETAILS_AVAILABLE_OK.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_DETAILS_AVAILABLE_OK.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_DETAILS_AVAILABLE_OK);
             responseObject.setResponseData(projectDocuments);
             return responseObject;
         } catch (Exception e) {
             log.error("An error occurred while getting the project details.", e);
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_DETAILS_NOT_AVAILABLE_ERROR.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_DETAILS_NOT_AVAILABLE_ERROR.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_DETAILS_NOT_AVAILABLE_ERROR);
             return responseObject;
         }
     }
@@ -167,23 +153,17 @@ public class ProjectController {
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
     @PostMapping(value = "/project")
     public @ResponseBody
-    ResponseObject createProject(@RequestBody ProjectDocument projectFileInfoDocument) {
+    ResponseObject createProject(@RequestBody ProjectDocument projectDocument) {
         ResponseObject responseObject = new ResponseObject();
         try {
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_CREATION_OK.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_CREATION_OK.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_CREATION_OK);
             responseObject.setResponseData(projectService
                     .saveOrUpdateProject(ProjectConverter.projectDocumentProjectFunction
-                            .apply(projectFileInfoDocument)));
+                            .apply(projectDocument)));
             return responseObject;
         } catch (Exception e) {
             log.error("An error occurred while creating the project.", e);
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_CREATION_ERROR.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_CREATION_ERROR.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_CREATION_ERROR);
             return responseObject;
         }
     }
@@ -191,23 +171,17 @@ public class ProjectController {
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
     @PutMapping(value = "/project")
     public @ResponseBody
-    ResponseObject updateProject(@RequestBody ProjectDocument projectFileInfoDocument) {
+    ResponseObject updateProject(@RequestBody ProjectDocument projectDocument) {
         ResponseObject responseObject = new ResponseObject();
         try {
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_UPDATE_OK.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_UPDATE_OK.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_UPDATE_OK);
             responseObject.setResponseData(projectService
                     .saveOrUpdateProject(ProjectConverter.projectDocumentProjectFunction
-                            .apply(projectFileInfoDocument)));
+                            .apply(projectDocument)));
             return responseObject;
         } catch (Exception e) {
             log.error("An error occurred while updating the project.", e);
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_UPDATE_ERROR.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_UPDATE_ERROR.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_UPDATE_ERROR);
             return responseObject;
         }
     }
@@ -226,6 +200,13 @@ public class ProjectController {
         log.info("project type is {}", projectFileType);
         log.info("project files are {}", files.length);
         ResponseObject responseObject = new ResponseObject();
+        if (Objects.isNull(projectId) ||
+                Objects.isNull(projectFileType) ||
+                files.length > 0 ||
+                Objects.isNull(projectFileInfoDocument)) {
+            createResponseObject(responseObject, StatusCodes.DATA_VALIDATION_ERROR);
+            return responseObject;
+        }
         if (ProjectFileType.KNOWN_FILE.getFileType().equals(projectFileType.getFileType())) {
             if ((Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesLat()) &&
                     Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesLon()) &&
@@ -233,10 +214,7 @@ public class ProjectController {
                     (Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesX()) &&
                             Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesY()) &&
                             Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesZ()))) {
-                ResponseStatus responseStatus = new ResponseStatus();
-                responseStatus.setResultCode(StatusCodes.PROJECT_CREATION_VALIDATION_ERROR.getStatusCode());
-                responseStatus.setResultDescription(StatusCodes.PROJECT_CREATION_VALIDATION_ERROR.getMessage());
-                responseObject.setResponseStatus(responseStatus);
+                createResponseObject(responseObject, StatusCodes.PROJECT_CREATION_VALIDATION_ERROR);
                 return responseObject;
             }
         }
@@ -248,18 +226,12 @@ public class ProjectController {
                             projectFileInfoDocument,
                             projectFileType,
                             files);
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_INFO_CREATION_OK.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_INFO_CREATION_OK.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_INFO_CREATION_OK);
             responseObject.setResponseData(projectFileInfoDocument);
             return responseObject;
         } catch (Exception e) {
             log.error("An error occurred while creating the project info.", e);
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_INFO_CREATION_ERROR.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_INFO_CREATION_ERROR.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_INFO_CREATION_ERROR);
             return responseObject;
         }
     }
@@ -275,30 +247,34 @@ public class ProjectController {
         log.info("project id is {}", projectId);
         log.info("project success? {}", success);
         ResponseObject responseObject = new ResponseObject();
+        if (Objects.isNull(projectId) ||
+                Objects.isNull(success) ||
+                Objects.isNull(token)) {
+            createResponseObject(responseObject, StatusCodes.DATA_VALIDATION_ERROR);
+            return responseObject;
+        }
         try {
             boolean updated = this.projectService.completeProject(projectId, success, token);
             if (!updated) {
-                ResponseStatus responseStatus = new ResponseStatus();
-                responseStatus.setResultCode(StatusCodes.PROJECT_CREATION_COMPLETED_OK.getStatusCode());
-                responseStatus.setResultDescription(StatusCodes.PROJECT_CREATION_COMPLETED_OK.getMessage());
-                responseObject.setResponseStatus(responseStatus);
+                createResponseObject(responseObject, StatusCodes.PROJECT_CREATION_COMPLETED_OK);
                 responseObject.setResponseData("not updated");
                 return responseObject;
             }
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_CREATION_COMPLETED_ERROR.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_CREATION_COMPLETED_ERROR.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_CREATION_COMPLETED_ERROR);
             responseObject.setResponseData("updated");
             return responseObject;
         } catch (Exception e) {
             log.error("An error occurred while creating the project info.", e);
-            ResponseStatus responseStatus = new ResponseStatus();
-            responseStatus.setResultCode(StatusCodes.PROJECT_CREATION_COMPLETED_ERROR.getStatusCode());
-            responseStatus.setResultDescription(StatusCodes.PROJECT_CREATION_COMPLETED_ERROR.getMessage());
-            responseObject.setResponseStatus(responseStatus);
+            createResponseObject(responseObject, StatusCodes.PROJECT_CREATION_COMPLETED_ERROR);
             responseObject.setResponseData("not updated");
             return responseObject;
         }
+    }
+
+    private void createResponseObject(ResponseObject responseObject, StatusCodes dataValidationError) {
+        ResponseStatus responseStatus = new ResponseStatus();
+        responseStatus.setResultCode(dataValidationError.getStatusCode());
+        responseStatus.setResultDescription(dataValidationError.getMessage());
+        responseObject.setResponseStatus(responseStatus);
     }
 }
