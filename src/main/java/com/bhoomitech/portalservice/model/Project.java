@@ -1,5 +1,6 @@
 package com.bhoomitech.portalservice.model;
 
+import com.xcodel.commons.project.ProjectMode;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -35,6 +36,9 @@ public class Project {
 
     @Column(name = "status")
     private String status;
+
+    @Column(name = "project_mode")
+    private ProjectMode projectMode;
 
     @Column(name = "created_timestamp")
     private Timestamp createdTimestamp;
