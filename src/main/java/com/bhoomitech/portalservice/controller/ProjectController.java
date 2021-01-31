@@ -13,14 +13,9 @@ import com.xcodel.commons.project.ProjectDocument;
 import com.xcodel.commons.project.ProjectFileInfoDocument;
 import com.xcodel.commons.project.ProjectFileType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -202,18 +197,18 @@ public class ProjectController {
         ResponseObject responseObject = new ResponseObject();
         if (Objects.isNull(projectId) ||
                 Objects.isNull(projectFileType) ||
-                files.length > 0 ||
+                files.length == 0 ||
                 Objects.isNull(projectFileInfoDocument)) {
             createResponseObject(responseObject, StatusCodes.DATA_VALIDATION_ERROR);
             return responseObject;
         }
         if (ProjectFileType.KNOWN_FILE.getFileType().equals(projectFileType.getFileType())) {
-            if ((Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesLat()) &&
-                    Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesLon()) &&
-                    Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesZ())) ||
-                    (Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesX()) &&
-                            Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesY()) &&
-                            Objects.nonNull(projectFileInfoDocument.getGpsCoordinatesZ()))) {
+            if (StringUtils.isAnyEmpty(projectFileInfoDocument.getGpsCoordinatesLat(),
+                    projectFileInfoDocument.getGpsCoordinatesLon(),
+                    projectFileInfoDocument.getGpsCoordinatesZ())
+                    && StringUtils.isAnyEmpty(projectFileInfoDocument.getGpsCoordinatesX(),
+                    projectFileInfoDocument.getGpsCoordinatesY(),
+                    projectFileInfoDocument.getGpsCoordinatesZ())) {
                 createResponseObject(responseObject, StatusCodes.PROJECT_CREATION_VALIDATION_ERROR);
                 return responseObject;
             }
