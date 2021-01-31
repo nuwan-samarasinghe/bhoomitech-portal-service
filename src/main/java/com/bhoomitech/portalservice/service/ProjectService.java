@@ -85,7 +85,9 @@ public class ProjectService {
 
     public void checkProjectName(String projectName, String userHref, ResponseObject responseObject) {
         ResponseStatus responseStatus = new ResponseStatus();
-        if (projectRepository.findByProjectNameAndUserHref(projectName, userHref).isPresent()) {
+        if (projectRepository.findByProjectNameAndUserHref(projectName, userHref).isPresent()
+                || projectRepository.findByProjectNameAndUserHref(StringUtils.replace(projectName, " ", "_"), userHref).isPresent()
+                || projectRepository.findByProjectNameAndUserHref(StringUtils.replace(projectName, "_", " "), userHref).isPresent()) {
             responseObject.setResponseData("not available");
             responseStatus.setResultCode(StatusCodes.PROJECT_NAME_AVAILABLE_OK.getStatusCode());
             responseStatus.setResultDescription(StatusCodes.PROJECT_NAME_AVAILABLE_OK.getMessage());
@@ -140,6 +142,11 @@ public class ProjectService {
     public Project getProjectByProjectName(String projectName) {
         return projectRepository.findByProjectName(projectName).isPresent() ?
                 projectRepository.findByProjectName(projectName).get() : new Project();
+    }
+
+    public Project getProjectById(Long projectId) {
+        return projectRepository.findById(projectId).isPresent() ?
+                projectRepository.findById(projectId).get() : new Project();
     }
 
     public boolean completeProject(@NonNull String projectId, @NonNull String success, String token) {

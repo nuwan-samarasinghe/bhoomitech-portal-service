@@ -101,14 +101,14 @@ public class ProjectController {
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
     @PostMapping(value = "/project/detail")
-    public ResponseObject getProjectInformation(@RequestParam("projectName") String projectName) {
+    public ResponseObject getProjectInformation(@RequestParam("projectId") Long projectId) {
         ResponseObject responseObject = new ResponseObject();
-        if (Objects.isNull(projectName)) {
+        if (Objects.isNull(projectId)) {
             createResponseObject(responseObject, StatusCodes.DATA_VALIDATION_ERROR);
             return responseObject;
         }
         try {
-            Project project = projectService.getProjectByProjectName(projectName);
+            Project project = projectService.getProjectById(projectId);
             createResponseObject(responseObject, StatusCodes.PROJECT_DETAILS_AVAILABLE_OK);
             responseObject.setResponseData(ProjectConverter.projectProjectDocumentFunction.apply(project, false));
             return responseObject;
