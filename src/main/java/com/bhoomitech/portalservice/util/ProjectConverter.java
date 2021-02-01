@@ -17,6 +17,8 @@ import java.util.function.Function;
 
 public final class ProjectConverter {
 
+    private static final String ERROR = "ERROR";
+
     public static BiFunction<Project, Boolean, ProjectDocument> projectProjectDocumentFunction = (project, isProjectOnly) -> {
         ProjectDocument projectDocument = new ProjectDocument();
         projectDocument.setProjectName(project.getProjectName());
@@ -66,6 +68,7 @@ public final class ProjectConverter {
         project.setUserHref(projectDocument.getUserHref());
         project.setAgreementStatus(projectDocument.getAgreementStatus());
         project.setPrice(projectDocument.getPrice());
+        project.setStatus(ERROR);
         project.setCreatedTimestamp(Timestamp.from(new Date().toInstant()));
         project.setProjectMode(projectDocument.getMode());
         project.setFileInfos(new ArrayList<>());
