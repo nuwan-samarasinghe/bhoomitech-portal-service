@@ -13,7 +13,7 @@ public enum StatusCodes {
     PROJECT_UPDATE_OK(2003, "project successfully created"),
     PROJECT_INFO_CREATION_OK(2004, "project info successfully created"),
     PROJECT_CREATION_COMPLETED_OK(2005, "project creation update success"),
-    PROJECT_DELETE_OK(2006, "project successfully created"),
+    PROJECT_DELETE_OK(2006, "project successfully deleted"),
 
     PROJECT_NAME_NOT_AVAILABLE_ERROR(4000, "project name not available"),
     PROJECT_DETAILS_NOT_AVAILABLE_ERROR(4001, "An error occurred while getting project details"),
