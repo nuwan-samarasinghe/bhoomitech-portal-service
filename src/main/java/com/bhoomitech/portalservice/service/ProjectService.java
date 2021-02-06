@@ -265,6 +265,8 @@ public class ProjectService {
                             }));
             deleteObjectsRequest.setKeys(keyVersions);
             this.amazonS3Client.deleteObjects(deleteObjectsRequest);
+            projectData.setStatus(ProjectConverter.FILES_DELETED);
+            this.projectRepository.save(projectData);
         } else {
             ResponseStatus responseStatus = new ResponseStatus();
             responseStatus.setResultCode(StatusCodes.PROJECT_NAME_NOT_AVAILABLE_ERROR.getStatusCode());

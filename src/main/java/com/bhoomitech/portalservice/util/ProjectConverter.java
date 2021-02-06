@@ -17,7 +17,8 @@ import java.util.function.Function;
 
 public final class ProjectConverter {
 
-    private static final String ERROR = "ERROR";
+    public static final String ERROR = "ERROR";
+    public static final String FILES_DELETED = "FILES_DELETED";
 
     public static BiFunction<Project, Boolean, ProjectDocument> projectProjectDocumentFunction = (project, isProjectOnly) -> {
         ProjectDocument projectDocument = new ProjectDocument();
