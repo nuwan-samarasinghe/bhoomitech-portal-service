@@ -182,9 +182,9 @@ public class ProjectController {
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
-    @DeleteMapping(value = "/project")
+    @DeleteMapping(value = "/project/{projectId}")
     public @ResponseBody
-    ResponseObject deleteProject(@RequestParam("projectId") Long projectId) {
+    ResponseObject deleteProject(@PathVariable("projectId") Long projectId) {
         ResponseObject responseObject = new ResponseObject();
         try {
             createResponseObject(responseObject, StatusCodes.PROJECT_DELETE_OK);
