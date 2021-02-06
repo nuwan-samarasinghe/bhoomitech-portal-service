@@ -10,9 +10,13 @@ import com.xcodel.commons.auth.userdetail.UserDetailDocument;
 import com.xcodel.commons.common.ResponseObject;
 import com.xcodel.commons.common.ResponseStatus;
 import com.xcodel.commons.project.ProjectDocument;
+import com.xcodel.commons.project.ProjectFileInfoDocument;
+import com.xcodel.commons.project.ProjectFileType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -173,6 +177,22 @@ public class ProjectController {
         } catch (Exception e) {
             log.error("An error occurred while updating the project.", e);
             createResponseObject(responseObject, StatusCodes.PROJECT_UPDATE_ERROR);
+            return responseObject;
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
+    @DeleteMapping(value = "/project")
+    public @ResponseBody
+    ResponseObject deleteProject(@RequestParam("projectId") Long projectId) {
+        ResponseObject responseObject = new ResponseObject();
+        try {
+            createResponseObject(responseObject, StatusCodes.PROJECT_DELETE_OK);
+            projectService.deleteProject(projectId, responseObject);
+            return responseObject;
+        } catch (Exception e) {
+            log.error("An error occurred while deleting the project.", e);
+            createResponseObject(responseObject, StatusCodes.PROJECT_DELETE_ERROR);
             return responseObject;
         }
     }

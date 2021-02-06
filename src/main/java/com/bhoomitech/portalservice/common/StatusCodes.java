@@ -13,6 +13,7 @@ public enum StatusCodes {
     PROJECT_UPDATE_OK(2003, "project successfully created"),
     PROJECT_INFO_CREATION_OK(2004, "project info successfully created"),
     PROJECT_CREATION_COMPLETED_OK(2005, "project creation update success"),
+    PROJECT_DELETE_OK(2006, "project successfully created"),
 
     PROJECT_NAME_NOT_AVAILABLE_ERROR(4000, "project name not available"),
     PROJECT_DETAILS_NOT_AVAILABLE_ERROR(4001, "An error occurred while getting project details"),
@@ -21,6 +22,7 @@ public enum StatusCodes {
     PROJECT_UPDATE_ERROR(4004, "cannot update project"),
     PROJECT_INFO_CREATION_ERROR(4005, "cannot create project info"),
     PROJECT_CREATION_COMPLETED_ERROR(4006, "project creation update error"),
+    PROJECT_DELETE_ERROR(4007, "cannot update project"),
 
     PROJECT_CREATION_VALIDATION_ERROR(5001, "No gps coordinates provided for the known files"),
     DATA_VALIDATION_ERROR(5002, "invalid data provided");

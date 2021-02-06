@@ -1,5 +1,7 @@
 package com.bhoomitech.portalservice.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.bhoomitech.portalservice.common.StatusCodes;
 import com.bhoomitech.portalservice.model.FileStatus;
 import com.bhoomitech.portalservice.model.Project;
@@ -17,6 +19,7 @@ import com.xcodel.commons.project.ProjectFileType;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
@@ -62,12 +63,21 @@ public class ProjectService {
     @Value("${app.custom-configs.email.smtp-port}")
     private Integer smtpPort;
 
+    @Value("${app.custom-configs.bucket-name}")
+    private String bucketName;
+
+    @Value("${app.custom-configs.file-base-location}")
+    private String fileBaseLocation;
+
+    private final AmazonS3 amazonS3Client;
+
     public ProjectService(ProjectRepository projectRepository,
                           FileUploadService fileUploadService,
-                          AuthService authService) {
+                          AuthService authService, AmazonS3 amazonS3Client) {
         this.projectRepository = projectRepository;
         this.fileUploadService = fileUploadService;
         this.authService = authService;
+        this.amazonS3Client = amazonS3Client;
     }
 
     public List<Project> getProject() {
@@ -237,5 +247,31 @@ public class ProjectService {
         else
             log.error("email sent failed to {}", toEmail);
         return success;
+    }
+
+    public void deleteProject(Long projectId, ResponseObject responseObject) {
+        Optional<Project> project = projectRepository.findById(projectId);
+        if (project.isPresent()) {
+            DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucketName);
+            List<DeleteObjectsRequest.KeyVersion> keyVersions = new ArrayList<>();
+
+            Project projectData = project.get();
+            projectData.getFileInfos().forEach(projectFileInfo -> {
+                Arrays.stream(projectFileInfo.getFileLocation().split(","))
+                        .forEach(fileLocation -> {
+                            DeleteObjectsRequest.KeyVersion keyVersion = new DeleteObjectsRequest
+                                    .KeyVersion(fileLocation.replace(fileBaseLocation, ""));
+                            keyVersions.add(keyVersion);
+                        });
+            });
+            deleteObjectsRequest.setKeys(keyVersions);
+            this.amazonS3Client.deleteObjects(deleteObjectsRequest);
+        } else {
+            ResponseStatus responseStatus = new ResponseStatus();
+            responseStatus.setResultCode(StatusCodes.PROJECT_NAME_NOT_AVAILABLE_ERROR.getStatusCode());
+            responseStatus.setResultDescription(StatusCodes.PROJECT_NAME_NOT_AVAILABLE_ERROR.getMessage());
+            responseObject.setResponseStatus(responseStatus);
+        }
+
     }
 }
