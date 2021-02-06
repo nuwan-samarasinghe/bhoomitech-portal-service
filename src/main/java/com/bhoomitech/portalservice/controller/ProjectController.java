@@ -181,7 +181,7 @@ public class ProjectController {
         }
     }
 
-    @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
+    /*@PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
     @PostMapping(value = "/project-info")
     public ResponseObject createProjectFileInfoDocument(
             @RequestParam("additionalDirStructure") String additionalDirStructure,
@@ -229,7 +229,7 @@ public class ProjectController {
             createResponseObject(responseObject, StatusCodes.PROJECT_INFO_CREATION_ERROR);
             return responseObject;
         }
-    }
+    }*/
 
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")

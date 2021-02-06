@@ -31,7 +31,7 @@ public final class ProjectConverter {
         projectDocument.setStatus(project.getStatus());
         projectDocument.setCreatedTimestamp(project.getCreatedTimestamp().toString());
         projectDocument.setMode(project.getProjectMode());
-
+        projectDocument.setStatus(project.getStatus());
         if (!isProjectOnly) {
             project.getFileInfos().forEach(projectFileInfo -> {
                 ProjectFileInfoDocument projectFileInfoDocument = new ProjectFileInfoDocument();
