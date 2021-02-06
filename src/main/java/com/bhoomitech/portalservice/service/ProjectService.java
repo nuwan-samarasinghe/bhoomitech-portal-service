@@ -256,14 +256,13 @@ public class ProjectService {
             List<DeleteObjectsRequest.KeyVersion> keyVersions = new ArrayList<>();
 
             Project projectData = project.get();
-            projectData.getFileInfos().forEach(projectFileInfo -> {
-                Arrays.stream(projectFileInfo.getFileLocation().split(","))
-                        .forEach(fileLocation -> {
-                            DeleteObjectsRequest.KeyVersion keyVersion = new DeleteObjectsRequest
-                                    .KeyVersion(fileLocation.replace(fileBaseLocation, ""));
-                            keyVersions.add(keyVersion);
-                        });
-            });
+            projectData.getFileInfos().forEach(projectFileInfo ->
+                    Arrays.stream(projectFileInfo.getFileLocation().split(","))
+                            .forEach(fileLocation -> {
+                                DeleteObjectsRequest.KeyVersion keyVersion = new DeleteObjectsRequest
+                                        .KeyVersion(fileLocation.replace(fileBaseLocation, ""));
+                                keyVersions.add(keyVersion);
+                            }));
             deleteObjectsRequest.setKeys(keyVersions);
             this.amazonS3Client.deleteObjects(deleteObjectsRequest);
         } else {
