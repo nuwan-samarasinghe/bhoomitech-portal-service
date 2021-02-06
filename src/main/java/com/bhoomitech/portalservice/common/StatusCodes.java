@@ -22,7 +22,7 @@ public enum StatusCodes {
     PROJECT_UPDATE_ERROR(4004, "cannot update project"),
     PROJECT_INFO_CREATION_ERROR(4005, "cannot create project info"),
     PROJECT_CREATION_COMPLETED_ERROR(4006, "project creation update error"),
-    PROJECT_DELETE_ERROR(4007, "cannot update project"),
+    PROJECT_DELETE_ERROR(4007, "cannot delete project"),
 
     PROJECT_CREATION_VALIDATION_ERROR(5001, "No gps coordinates provided for the known files"),
     DATA_VALIDATION_ERROR(5002, "invalid data provided");
