@@ -14,6 +14,7 @@ import com.xcodel.commons.project.ProjectFileInfoDocument;
 import com.xcodel.commons.project.ProjectFileType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -161,6 +162,12 @@ public class ProjectController {
             createResponseObject(responseObject, StatusCodes.PROJECT_CREATION_ERROR);
             return responseObject;
         }
+    }
+
+    @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
+    @GetMapping(value = "/project/keep-live")
+    public ResponseEntity keepLive() {
+        return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("hasRole('ROLE_admin') or hasRole('ROLE_operator')")
