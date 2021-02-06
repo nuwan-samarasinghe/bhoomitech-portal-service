@@ -27,6 +27,12 @@
 
     <repositories>
         <repository>
+            <id>maven-central</id>
+            <name>Maven repository</name>
+            <url>https://repo1.maven.org/maven2/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
             <id>xcodel-repo</id>
             <name>Excodel maven repository</name>
             <url>https://bitbucket.org/xcodel/xcodel-repo/src/master/</url>
